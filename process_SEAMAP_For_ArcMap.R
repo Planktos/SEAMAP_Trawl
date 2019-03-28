@@ -1,7 +1,15 @@
+# PROCESS_SEAMAP_FOR_ARCMAP ---------
+
+# PURPOSE: clean-up output from Fish_Biomass_Step3 (Ruzicka SEAMAP query chain output) in prep for upload into ArcCatalog & ArcMap software
+
+# DATE CREATED: 28 March 2019
+
+# AUTHOR: Kelly L. Robinson
+
+# -----------
 
 library(plyr)
 library(dplyr)
-library(stringr)
 library(data.table)
 library(xlsx)
 
