@@ -426,6 +426,32 @@ SI2 = subset(StationInfo_3, select = c("DECSLAT", "DECSLON", "DECELAT", "DECELON
                                        "CRUISEID", "STATIONID"))
 
 AURELIA = merge(Fish_Biomass_3, SI2, by = c("STATIONID", "CRUISEID", "CRUISE_NO"), all.y = T)
+  
+#Changing NAs to zeros for population or biomass density columns for stations at which none of the target group was collected.
+
+AURELIA$Use_Pop_Den_no_m2 = with(AURELIA, 
+                                 ifelse(is.na(Use_Pop_Den_no_m2), 0,Use_Pop_Den_no_m2))
+
+AURELIA$Use_Biomass_Den_kg_m2 = with(AURELIA, 
+                                 ifelse(is.na(Use_Biomass_Den_kg_m2), 0,Use_Biomass_Den_kg_m2))
+
+AURELIA$SumofUse_Count = with(AURELIA, 
+                                 ifelse(is.na(SumofUse_Count), 0,SumofUse_Count))
+
+AURELIA$SumofUse_Tot_WWT_kg = with(AURELIA, 
+                                 ifelse(is.na(SumofUse_Tot_WWT_kg), 0,SumofUse_Tot_WWT_kg))
+
+AURELIA$Pop_Den_Pelagic_no_m2 = with(AURELIA, 
+                                 ifelse(is.na(Pop_Den_Pelagic_no_m2), 0,Pop_Den_Pelagic_no_m2))
+
+AURELIA$Pop_Den_Demersal_no_m2 = with(AURELIA, 
+                                 ifelse(is.na(Pop_Den_Demersal_no_m2), 0,Pop_Den_Demersal_no_m2))
+
+AURELIA$Biomass_Den_Pelagic_kg_m2 = with(AURELIA, 
+                                 ifelse(is.na(Biomass_Den_Pelagic_kg_m2), 0,Biomass_Den_Pelagic_kg_m2))
+
+AURELIA$Biomass_Den_Demersal_kg_m2 = with(AURELIA, 
+                                 ifelse(is.na(Biomass_Den_Demersal_kg_m2), 0,Biomass_Den_Demersal_kg_m2))  
 
 #write.csv(AURELIA, "Aurelia_SEAMAP.csv")
 
