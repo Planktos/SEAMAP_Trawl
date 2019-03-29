@@ -1,6 +1,9 @@
 #Code for SEAMAP database from Access queries
 #Stacy Calhoun, 31 Aug 18
 
+remove(list=ls())
+assign("last.warning", NULL, envir = baseenv())
+
 # Libraries and Datasets --------------------------------------------------
 
 library(plyr)
