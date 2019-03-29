@@ -38,7 +38,7 @@ FC1_NT = merge(FC1, NT, by.x = "BIO_BGS", by.y = "NODC_code", all.x = T)
 colnames(FC1_NT)[1] = "NODC_code"
 
 #major_group can be set as needed as well as the aggregate group.
-Fish_Cnt_1 = subset(FC1_NT, major_group == 'jellyfish' & TAXONOMIC == "AURELIA" | TAXONOMIC == "AURELA AURITA")
+Fish_Cnt_1 = subset(FC1_NT, major_group == 'jellyfish' & TAXONOMIC == "AURELIA" | TAXONOMIC == "AURELIA AURITA")
 
 
 
@@ -313,7 +313,7 @@ StationInfo_3$AreaFiltered_Demersal_m2 = StationInfo_3$VolumeFiltered_Demersal_m
 FW5 = subset(Fish_Wt_5, select = c("STATIONID", "CRUISEID", "VESSEL", "CRUISE_NO", "NODC_code", 
                                    "Total_WWT_g", "mean_WWT_g", "CruiseMean_WWT_g", "ForcedMean_WWT_g"))
 
-Fish_Biomass_1 = merge(Fish_Cnt_5, FW5, by = c("STATIONID", "CRUISEID", "VESSEL", "CRUISE_NO")) 
+Fish_Biomass_1 = merge(Fish_Cnt_5, FW5, by = c("STATIONID", "CRUISEID", "VESSEL", "CRUISE_NO"), all.x = T) 
 
 #Create Use_Count column
 
@@ -419,10 +419,10 @@ Fish_Biomass_3$Use_Biomass_Den_kg_m2 = with(Fish_Biomass_3,
 
 # Adding Coordinates and Dates to Fish_Biomass_3 --------------------------
 
-SI2 = subset(StationInfo_2, select = c("DECSLAT", "DECSLON", "DECELAT", "DECELON", "CRUISE_NO",
-                                       "CRUISEID", "Year", "Month", "Day", "STATIONID"))
+SI2 = subset(StationInfo_3, select = c("DECSLAT", "DECSLON", "DECELAT", "DECELON", "CRUISE_NO",
+                                       "CRUISEID", "STATIONID"))
 
-AURELIA = merge(Fish_Biomass_3, SI2, by = c("STATIONID", "CRUISEID", "CRUISE_NO", "Year", "Month", "Day"))
+AURELIA = merge(Fish_Biomass_3, SI2, by = c("STATIONID", "CRUISEID", "CRUISE_NO"), all.y = T)
 
 #write.csv(AURELIA, "Aurelia_SEAMAP.csv")
 
