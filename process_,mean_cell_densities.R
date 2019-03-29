@@ -16,10 +16,10 @@ library(data.table)
 source("f_delta_stats.R")
 
 
-d <- as.data.frame(fread(input = "jellyfish_SEAMAP_30min.txt", sep = ",", stringsAsFactors = F))
+d <- as.data.frame(fread(input = "jelly_SEAMAP_30min.txt", sep = ",", stringsAsFactors = F))
 names(d) <- tolower(names(d))
-d$agggrp_20130430 <- gsub(x = d$agggrp_20130430, pattern = "_", replacement = " ")
-d <- d[complete.cases(d),] #remove the 3 cases of NAs
+
+#d <- d[complete.cases(d),] #remove the 3 cases of NAs
 
 d <- d[,c(4:length((d)))]
 d <- plyr::rename(d, c("join_fid" = "cell_id"))
@@ -39,8 +39,8 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 
   year <- unique(x$year)
   cell_id <- unique(x$cell_id)
-  agg_grp <- unique(x$agggrp_20130430)
-  season <- unique(x$season)
+  agg_grp <- unique(x$agg_grp)
+  area_m2 <- unique(x$area_m2)
 
   if(nrow(x)>0){
 
@@ -60,13 +60,13 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 
     cell_area_m2 <- unique(x$area_m2)
 
-    total_bio_wwt_kg_mean <- bio_mean*area
-    total_bio_wwt_kg_var <- bio_var_kg*area
+    total_bio_wwt_kg_mean <- bio_mean_kg*area_m2
+    total_bio_wwt_kg_var <- bio_var_kg*area_m2
 
-    total_indiv_mean <- pop_mean_no_m3*area
-    total_indiv_var <- pop_var_no_m3*area
+    total_indiv_mean <- pop_mean_no_m3*area_m2
+    total_indiv_var <- pop_var_no_m3*area_m2
 
-    y <- data.frame(cell_id, cell_area_m2, year, agg_grp, season, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
+    y <- data.frame(cell_id, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
                     pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv_mean, total_indiv_var, n_obs)
 
     } else {
@@ -83,13 +83,13 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 
     cell_area_m2 <- unique(x$area_m2)
 
-    total_bio_wwt_kg_mean <- bio_mean*area
-    total_bio_wwt_kg_var <- bio_var_kg*area
+    total_bio_wwt_kg_mean <- bio_mean_kg*area_m2
+    total_bio_wwt_kg_var <- bio_var_kg*area_m2
 
-    total_indiv_mean <- pop_mean_no_m3*area
-    total_indiv_var <- pop_var_no_m3*area
+    total_indiv_mean <- pop_mean_no_m3*area_m2
+    total_indiv_var <- pop_var_no_m3*area_m2
 
-    y <- data.frame(cell_id, cell_area_m2, year, agg_grp, season, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
+    y <- data.frame(cell_id, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
                     pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv_mean, total_indiv_var, n_obs)
 
 
@@ -102,8 +102,6 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 }, .progress = "text", .inform = T)
 
 yr_cell_stats$agg_grp <- as.character(yr_cell_stats$agg_grp)
-yr_cell_stats$season <- as.character(yr_cell_stats$season)
-
 
 #calculate annual mean biomass & population density | STEP 2 in JMP workflow | STEP 3 in JMP workflow
 
