@@ -1,7 +1,8 @@
 
 # PROCESS_SEAMAP_FROM_FISHNET ---------
 
-# PURPOSE: Generate time-series of annual mean biomass (kg WWT/m3) and abundance (no/m4) from spatial join data created with fishnet
+# PURPOSE: Generate time-series of annual mean biomass (kg WWT/m3) and abundance (no/m4) from spatial join data created with fishnet. (This is the same as doing "Step 2" &
+#          'Step 3" in the JMP processing of SEAMAP data.)
 
 # DATE CREATED: 28 March 2019
 
@@ -18,6 +19,7 @@ source("f_delta_stats.R")
 d <- as.data.frame(fread(input = "jellyfish_SEAMAP_30min.txt", sep = ",", stringsAsFactors = F))
 names(d) <- tolower(names(d))
 d$agggrp_20130430 <- gsub(x = d$agggrp_20130430, pattern = "_", replacement = " ")
+d <- d[complete.cases(d),] #remove the 3 cases of NAs
 
 d <- d[,c(4:length((d)))]
 d <- plyr::rename(d, c("join_fid" = "cell_id"))
@@ -31,7 +33,7 @@ a <- plyr::rename(a, c("objectid" = "cell_id"))
 m <- merge(d, a ,by = "cell_id")
 m <- plyr::rename(m, c("shape_area" = "area_m2"))
 
-#calculate annual mean biomass & population density
+#calculate annual mean biomass & population density | STEP 2 in JMP workflow
 
 yr.stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 
@@ -58,10 +60,14 @@ yr.stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 
     cell_area_m2 <- unique(x$area_m2)
 
-    total_bio_wwt_kg <- bio_mean*area
-    total_indiv <- pop.mean*area
+    total_bio_wwt_kg_mean <- bio_mean*area
+    total_bio_wwt_kg_var <- bio_var_kg*area
 
-    y <- data.frame(cell_id, cell_area_m2, year, agg_grp, season, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg, pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv, n_obs)
+    total_indiv_mean <- pop_mean_no_m3*area
+    total_indiv_var <- pop_var_no_m3*area
+
+    y <- data.frame(cell_id, cell_area_m2, year, agg_grp, season, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
+                    pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv_mean, total_indiv_var, n_obs)
 
     } else {
 
@@ -77,10 +83,14 @@ yr.stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 
     cell_area_m2 <- unique(x$area_m2)
 
-    total_bio_wwt_kg <- 0
-    total_indiv <- 0
+    total_bio_wwt_kg_mean <- bio_mean*area
+    total_bio_wwt_kg_var <- bio_var_kg*area
 
-    y <- data.frame(cell_id, cell_area_m2, year, agg_grp, season, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg, pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv, n_obs)
+    total_indiv_mean <- pop_mean_no_m3*area
+    total_indiv_var <- pop_var_no_m3*area
+
+    y <- data.frame(cell_id, cell_area_m2, year, agg_grp, season, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
+                    pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv_mean, total_indiv_var, n_obs)
 
 
     }
@@ -89,5 +99,6 @@ yr.stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 
   return(y)
 
-
 }, .progress = "text", .inform = T)
+
+
