@@ -19,7 +19,6 @@ names(d) <- tolower(names(d))
 d <- plyr::rename(d, c("use_depth_m" = "depth_m"))
 d <- plyr::rename(d, c("agggrp_20130430" = "agg_grp"))
 
-
 d$biomass_den_kg.m3 <- d$use_biomass_den_kg_m2*d$depth_m
 d$pop_den_no.m3 <- d$use_pop_den_no_m2*d$depth_m
 
@@ -62,9 +61,4 @@ d$decelat <- NULL
 d$decslon <- NULL
 d$decelon <- NULL
 
-
-
-#subset data for ArcMAp
-a <- d[,c(1:6,9,14:17)]
-
-write.table(a, file = paste0(unique(d$agg_grp), "_arc.txt"), sep =  "\t", col.names = T, row.names = F)
+write.table(d, file = paste0(unique(d$agg_grp), "_arc.txt"), sep =  "\t", col.names = T, row.names = F)
