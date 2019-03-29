@@ -1,4 +1,4 @@
-#Code for SEAMAP database from Access queries
+#Code for SEAMAP database from Access queries by Jim Ruzicka
 #Stacy Calhoun, 31 Aug 18
 
 remove(list=ls())
@@ -420,12 +420,16 @@ Fish_Biomass_3$Use_Biomass_Den_kg_m2 = with(Fish_Biomass_3,
 #write.csv(Fish_Biomass_3, "SEAMAP_query_data.csv")
 
 
-# Adding Coordinates and Dates to Fish_Biomass_3 --------------------------
+# Adding Coordinates and Dates to Fish_Biomass_3 (including stations where target group was not collected) --------------------------
 
 SI2 = subset(StationInfo_3, select = c("DECSLAT", "DECSLON", "DECELAT", "DECELON", "CRUISE_NO",
-                                       "CRUISEID", "STATIONID"))
+                                       "CRUISEID", "STATIONID", "Year", "Month", "Day", 
+                                       "Subregion_Depth", "Subregion_alongshore", "Use_Depth_m"))
 
-AURELIA = merge(Fish_Biomass_3, SI2, by = c("STATIONID", "CRUISEID", "CRUISE_NO"), all.y = T)
+AURELIA = merge(Fish_Biomass_3, SI2, by = c("STATIONID", "CRUISEID", "CRUISE_NO", "Year", "Month", "Day",
+                                            "Subregion_Depth", "Subregion_alongshore"), all.y = T)
+
+
   
 #Changing NAs to zeros for population or biomass density columns for stations at which none of the target group was collected.
 
