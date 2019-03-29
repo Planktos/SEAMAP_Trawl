@@ -12,20 +12,59 @@ library(data.table)
 
 d <- as.data.frame(fread(input = "Aurelia_SEAMAP.csv", stringsAsFactors = F, sep = ",", header = T))
 
-d$AggGrp_20130430 <- ifelse(test = is.na(d$AggGrp_20130430), "large_jellyfish", d$AggGrp_20130430)
+d$AggGrp_20130430 <- ifelse(test = is.na(d$AggGrp_20130430), "large jellyfish", d$AggGrp_20130430)
 
-d <- d[,c("AggGrp_20130430","Year","Season", "Month", "Day","STATIONID", "use_PopulationDensity_(No/m2)","use_BiomassDensity_(kg/m2)","use_Depth_(m)", "DECSLAT","DECSLON","DECELAT","DECELON"),]
+d <- d[,c("AggGrp_20130430","Year", "Month", "Day","STATIONID", "Use_Pop_Den_no_m2","Use_Biomass_Den_kg_m2","Use_Depth_m", "DECSLAT","DECSLON","DECELAT","DECELON"),]
+names(d) <- tolower(names(d))
+d <- plyr::rename(d, c("use_depth_m" = "depth_m"))
+d <- plyr::rename(d, c("agggrp_20130430" = "agg_grp"))
 
-d <- plyr::rename(d, c("use_BiomassDensity_(kg/m2)" = "biomass_den_kg.m2"))
-d <- plyr::rename(d, c("use_PopulationDensity_(No/m2)" = "pop_den_no.m2"))
-d <- plyr::rename(d, c("use_Depth_(m)" = "depth_m"))
 
-d$biomass_den_kg.m3 <- d$biomass_den_kg.m2*d$depth_m
-d$pop_den_no.m3 <- d$pop_den_no.m2*d$depth_m
+d$biomass_den_kg.m3 <- d$use_biomass_den_kg_m2*d$depth_m
+d$pop_den_no.m3 <- d$use_pop_den_no_m2*d$depth_m
 
-d <- d %>% rowwise() %>% mutate(DECLAT_ctr = mean(DECSLAT, DECELAT, na.rm = T), DECLON_ctr = mean(DECSLON, DECELON, na.rm = T))
+d$biomass_den_kg.m3 <- ifelse(test = is.na(d$biomass_den_kg.m3), 0, d$biomass_den_kg.m3)
+d$pop_den_no.m3 <- ifelse(test = is.na(d$pop_den_no.m3), 0, d$pop_den_no.m)
+
+f_mean_lat <- function(x){
+
+  decelat <- as.numeric(getElement(x, "decelat"))
+  decslat <- as.numeric(getElement(x, "decslat"))
+
+  if(!is.na(decelat)){
+    decslat_ctr <- (decslat + decelat)/2
+  } else {
+    decslat_ctr <- decslat
+  }
+  return(decslat_ctr)
+
+}
+f_mean_lon <- function(x){
+
+  decelon <- as.numeric(getElement(x, "decelon"))
+  decslon <- as.numeric(getElement(x, "decslon"))
+
+  if(!is.na(decelon)){
+    decslon_ctr <- (decslon + decelon)/2
+  } else {
+    decslon_ctr <- decslon
+  }
+
+  return(decslon_ctr)
+
+}
+
+d$decslat_ctr <- apply(X = d, MARGIN = 1, FUN = f_mean_lat)
+d$decslon_ctr <- apply(X = d, MARGIN = 1, FUN = f_mean_lon)
+
+d$decslat <- NULL
+d$decelat <- NULL
+d$decslon <- NULL
+d$decelon <- NULL
+
+
 
 #subset data for ArcMAp
 a <- d[,c(1:6,9,14:17)]
 
-write.table(a, file = "jellyfish_test_arc.txt", sep =  "\t", col.names = T, row.names = F)
+write.table(a, file = paste0(unique(d$agg_grp), "_arc.txt"), sep =  "\t", col.names = T, row.names = F)
