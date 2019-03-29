@@ -33,9 +33,9 @@ a <- plyr::rename(a, c("objectid" = "cell_id"))
 m <- merge(d, a ,by = "cell_id")
 m <- plyr::rename(m, c("shape_area" = "area_m2"))
 
-#calculate annual mean biomass & population density | STEP 2 in JMP workflow
+#calculate annual mean biomass & population density in each fish net cell | STEP 2 in JMP workflow
 
-yr.stats <- ddply(m, .variables = c("cell_id","year"), function(x){
+yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 
   year <- unique(x$year)
   cell_id <- unique(x$cell_id)
@@ -92,6 +92,57 @@ yr.stats <- ddply(m, .variables = c("cell_id","year"), function(x){
     y <- data.frame(cell_id, cell_area_m2, year, agg_grp, season, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
                     pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv_mean, total_indiv_var, n_obs)
 
+
+    }
+
+  }
+
+  return(y)
+
+}, .progress = "text", .inform = T)
+
+yr_cell_stats$agg_grp <- as.character(yr_cell_stats$agg_grp)
+yr_cell_stats$season <- as.character(yr_cell_stats$season)
+
+
+#calculate annual mean biomass & population density | STEP 2 in JMP workflow | STEP 3 in JMP workflow
+
+yr_stats <- ddply(yr_cell_stats, .variables = c("year"), function(x){
+
+  year <- unique(x$year)
+  agg_grp <- unique(x$agg_grp)
+
+  if(nrow(x)>0){
+
+    if(sum(x$total_bio_wwt_kg_mea)>0){
+
+      bio_stat <- f_delta_stat(x = x$total_bio_wwt_kg_mean)
+      bio_mean_kg <- bio_stat$mean
+      bio_var_kg <- sum(x$ total_bio_wwt_kg_var)
+      bio_sd_kg <- bio_var_kg^2
+
+      pop_stat <- f_delta_stat(x = x$pop_mean_no_m3)
+      pop_mean_no_m3 <- pop_stat$mean
+      pop_var_no_m3 <-  sum(x$pop_var_no_m3)
+      pop_sd_kg <- pop_var_no_m3^2
+
+      n_obs <- nrow(x)
+
+      y <- data.frame(year, agg_grp, bio_mean_kg, bio_var_kg, bio_sd_kg, pop_mean_no_m3, pop_var_no_m3, pop_sd_kg, n_obs)
+
+    } else {
+
+      bio_mean_kg <- 0
+      bio_var_kg <-0
+      bio_sd_kg <- bio_var_kg^2
+
+      pop_mean_no_m3 <- 0
+      pop_var_no_m3 <-  0
+      pop_sd_kg <- pop_var_no_m3^2
+
+      n_obs <- nrow(x)
+
+      y <- data.frame(year, agg_grp,bio_mean_kg, bio_var_kg, bio_sd_kg, pop_mean_no_m3, pop_var_no_m3, pop_sd_kg, n_obs)
 
     }
 
