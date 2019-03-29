@@ -9,9 +9,8 @@
 library(plyr)
 library(dplyr)
 library(data.table)
-library(xlsx)
 
-d <- as.data.frame(readxl::read_excel("FishBiomass_step3_Jellyfish.xlsx",col_names = T))
+d <- as.data.frame(fread(input = "Aurelia_SEAMAP.csv", stringsAsFactors = F, sep = ",", header = T))
 
 d$AggGrp_20130430 <- ifelse(test = is.na(d$AggGrp_20130430), "large_jellyfish", d$AggGrp_20130430)
 
