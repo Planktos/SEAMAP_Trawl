@@ -149,5 +149,3 @@ yr_stats <- ddply(yr_cell_stats, .variables = c("year"), function(x){
   return(y)
 
 }, .progress = "text", .inform = T)
-
-
