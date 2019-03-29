@@ -424,7 +424,7 @@ Fish_Biomass_3$Use_Biomass_Den_kg_m2 = with(Fish_Biomass_3,
 
 SI2 = subset(StationInfo_3, select = c("DECSLAT", "DECSLON", "DECELAT", "DECELON", "CRUISE_NO",
                                        "CRUISEID", "STATIONID", "Year", "Month", "Day", 
-                                       "Subregion_Depth", "Subregion_alongshore"))
+                                       "Subregion_Depth", "Subregion_alongshore", "Use_Depth_m"))
 
 AURELIA = merge(Fish_Biomass_3, SI2, by = c("STATIONID", "CRUISEID", "CRUISE_NO", "Year", "Month", "Day",
                                             "Subregion_Depth", "Subregion_alongshore"), all.y = T)
