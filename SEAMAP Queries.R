@@ -1,4 +1,4 @@
-#Code for SEAMAP database from Access queries
+#Code for SEAMAP database from Access queries by Jim Ruzicka
 #Stacy Calhoun, 31 Aug 18
 
 remove(list=ls())
