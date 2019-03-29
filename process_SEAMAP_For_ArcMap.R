@@ -6,8 +6,6 @@
 
 # AUTHOR: Kelly L. Robinson
 
-# -----------
-
 library(plyr)
 library(dplyr)
 library(data.table)
