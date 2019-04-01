@@ -117,10 +117,11 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 
 yr_cell_stats$agg_grp <- as.character(yr_cell_stats$agg_grp)
 
-#sent to Hui Lui @ TAMU-CC
+#data subsetted to send to Dr. Hui Lui @ TAMU-CC
 j <- yr_cell_stats[yr_cell_stats$year > 2011,]
-j <- plyr::rename(j, c("agg_group" = "taxa_grp"))
-j <- j[j(1:3,"pop_mean_no_m3", "pop_var_no_m3","n_obs")]
+j <- plyr::rename(j, c("agg_grp" = "taxa_grp"))
+j$taxa_grp <- "Aurelia_spp"
+j <- j[,c("cell_id", "decslat_cell_ctr", "decslon_cell_ctr","year","taxa_grp","pop_mean_no_m3", "pop_var_no_m3","n_obs")]
 
 
 #calculate annual mean biomass & population density | STEP 2 in JMP workflow | STEP 3 in JMP workflow
