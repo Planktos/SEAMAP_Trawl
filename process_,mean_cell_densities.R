@@ -34,8 +34,8 @@ a <- plyr::rename(a, c("objectid" = "cell_id"))
 #Read in Cell Center XY coordinates -----------
 c <- as.data.frame(fread(input = "30minCell_CtrPts.txt", sep = ",", stringsAsFactors = F))
 names(c) <- tolower(names(c))
-c <- plyr::rename(c, c("point_x" = "decslat_cell_ctr"))
-c <- plyr::rename(c, c("point_y" = "decslon_cell_ctr"))
+c <- plyr::rename(c, c("point_x" = "decslon_cell_ctr"))
+c <- plyr::rename(c, c("point_y" = "decslat_cell_ctr"))
 c <- plyr::rename(c, c("orig_fid" = "cell_id"))
 c <- c[,c(3:5)]
 
@@ -122,6 +122,8 @@ j <- yr_cell_stats[yr_cell_stats$year > 2011,]
 j <- plyr::rename(j, c("agg_grp" = "taxa_grp"))
 j$taxa_grp <- "Aurelia_spp"
 j <- j[,c("cell_id", "decslat_cell_ctr", "decslon_cell_ctr","year","taxa_grp","pop_mean_no_m3", "pop_var_no_m3","n_obs")]
+
+write.csv(x = j, file = "Aurliea_GoMex_SEAMAP_2011-2017_30minCells.csv", row.names = F)
 
 
 #calculate annual mean biomass & population density | STEP 2 in JMP workflow | STEP 3 in JMP workflow
