@@ -39,7 +39,7 @@ c <- plyr::rename(c, c("point_y" = "decslon_cell_ctr"))
 c <- plyr::rename(c, c("orig_fid" = "cell_id"))
 c <- c[,c(3:5)]
 
-# Merge all files together --------
+# Merge all of the files above together --------
 ac <- merge(a, c ,by = "cell_id")
 m <- merge(d, ac ,by = "cell_id")
 m <- plyr::rename(m, c("shape_area" = "area_m2"))
@@ -52,8 +52,9 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
   cell_id <- unique(x$cell_id)
   agg_grp <- unique(x$agg_grp)
   area_m2 <- unique(x$area_m2)
-  decslat_ctr <- unique(x$decslat_ctr)
-  decslon_ctr <- unique(x$decslon_ctr)
+  decslat_cell_ctr <- unique(x$decslat_cell_ctr)
+  decslon_cell_ctr <- unique(x$decslon_cell_ctr)
+
 
   if(nrow(x)>0){
 
@@ -79,7 +80,7 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
     total_indiv_mean <- pop_mean_no_m3*area_m2
     total_indiv_var <- pop_var_no_m3*area_m2
 
-    y <- data.frame(cell_id, decslat_ctr, decslon_ctr, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
+    y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
                     pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv_mean, total_indiv_var, n_obs)
 
     } else {
@@ -102,7 +103,7 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
     total_indiv_mean <- pop_mean_no_m3*area_m2
     total_indiv_var <- pop_var_no_m3*area_m2
 
-    y <- data.frame(cell_id, decslat_ctr, decslon_ctr, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
+    y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
                     pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv_mean, total_indiv_var, n_obs)
 
 
