@@ -24,13 +24,24 @@ names(d) <- tolower(names(d))
 d <- d[,c(4:length((d)))]
 d <- plyr::rename(d, c("join_fid" = "cell_id"))
 
+#REad in Cell Areas -----
 a <- as.data.frame(fread(input = "30minCellArea.txt", sep = ",", stringsAsFactors = F))
 names(a) <- tolower(names(a))
 
 a <- a[,c(1,3)]
 a <- plyr::rename(a, c("objectid" = "cell_id"))
 
-m <- merge(d, a ,by = "cell_id")
+#Read in Cell Center XY coordinates -----------
+c <- as.data.frame(fread(input = "30minCell_CtrPts.txt", sep = ",", stringsAsFactors = F))
+names(c) <- tolower(names(c))
+c <- plyr::rename(c, c("point_x" = "decslat_cell_ctr"))
+c <- plyr::rename(c, c("point_y" = "decslon_cell_ctr"))
+c <- plyr::rename(c, c("orig_fid" = "cell_id"))
+c <- c[,c(3:5)]
+
+# Merge all files together --------
+ac <- merge(a, c ,by = "cell_id")
+m <- merge(d, ac ,by = "cell_id")
 m <- plyr::rename(m, c("shape_area" = "area_m2"))
 
 #calculate annual mean biomass & population density in each fish net cell | STEP 2 in JMP workflow
