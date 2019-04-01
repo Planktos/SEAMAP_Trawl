@@ -41,6 +41,8 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
   cell_id <- unique(x$cell_id)
   agg_grp <- unique(x$agg_grp)
   area_m2 <- unique(x$area_m2)
+  decslat_ctr <- unique(x$decslat_ctr)
+  decslon_ctr <- unique(x$decslon_ctr)
 
   if(nrow(x)>0){
 
@@ -66,7 +68,7 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
     total_indiv_mean <- pop_mean_no_m3*area_m2
     total_indiv_var <- pop_var_no_m3*area_m2
 
-    y <- data.frame(cell_id, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
+    y <- data.frame(cell_id, decslat_ctr, decslon_ctr, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
                     pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv_mean, total_indiv_var, n_obs)
 
     } else {
@@ -89,7 +91,7 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
     total_indiv_mean <- pop_mean_no_m3*area_m2
     total_indiv_var <- pop_var_no_m3*area_m2
 
-    y <- data.frame(cell_id, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
+    y <- data.frame(cell_id, decslat_ctr, decslon_ctr, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
                     pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv_mean, total_indiv_var, n_obs)
 
 
@@ -102,6 +104,12 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 }, .progress = "text", .inform = T)
 
 yr_cell_stats$agg_grp <- as.character(yr_cell_stats$agg_grp)
+
+#sent to Hui Lui @ TAMU-CC
+j <- yr_cell_stats[yr_cell_stats$year > 2011,]
+j <- plyr::rename(j, c("agg_group" = "taxa_grp"))
+j <- j[j(1:3,"pop_mean_no_m3", "pop_var_no_m3","n_obs")]
+
 
 #calculate annual mean biomass & population density | STEP 2 in JMP workflow | STEP 3 in JMP workflow
 
