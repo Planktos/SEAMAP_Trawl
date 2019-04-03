@@ -12,6 +12,24 @@ library(readxl)
 library(data.table)
 library(lubridate)
 
+
+#functions -----
+clean.quotes <- function(y){
+    gsub(pattern = '"', replacement = "", x = y)
+  }
+clean.whitespace<- function(y){
+  gsub(pattern = ' ', replacement = "", x = y)
+}
+
+
+# Set specific interest groups from Name Translator Table ----
+NameTrans = read_xlsx(path = 'NameTranslator_table201305.xlsx')
+View(NameTrans)
+
+major.grp = "jellyfish"
+taxa = c("AURELIA","AURELIA AURITA")
+
+# load SEAMAP data files "https://seamap.gsmfc.org/datarequests/index.php" -----
 INGEST_DATA = read.csv('20190329_SEAMAP_csv/INGEST_DATA.csv')
 INVREC = read.csv('20190329_SEAMAP_csv/INVREC.csv')
 ISTREC = read.csv('20190329_SEAMAP_csv/ISTREC.csv')
@@ -23,18 +41,25 @@ CTDREC = read.csv('20190329_SEAMAP_csv/CTDREC.csv')
 GLFREC = read.csv('20190329_SEAMAP_csv/GLFREC.csv')
 BGSREC = read.csv('20190329_SEAMAP_csv/BGSREC.csv')
 ENVREC = read.csv('20190329_SEAMAP_csv/ENVREC.csv')
-
-#TAREC = read.csv('STAREC.csv')
-STAREC = read.csv(file = "20190329_SEAMAP_csv/STAREC.csv", stringsAsFactors = F, header = T, quote = "", fill = T) #updated to read-in all the lines of the text file
-
-CRUISES = read.csv('CRUISES.csv')
-NameTrans = read_xlsx('NameTranslator_table201305.xlsx')
+STAREC = read.csv(file = "20190329_SEAMAP_csv/STAREC_rev20190402.csv", stringsAsFactors = F, header = T, quote = "", fill = T) #updated to read-in all the lines of the text file
+CRUISES = read.csv('20190329_SEAMAP_csv/CRUISES.csv')
 
 
+#cleanup for STAREC ---------
+# get field names
+s.names = read.csv(file = "20190329_SEAMAP_csv/STAREC_rev20190402.csv", stringsAsFactors = F, header = T)
+names(STAREC) <- names(s.names)
+rm(s.names)
 
-# Fish_Count_Step_1 ------------------------------------------------------------
+#clean quotes off of data
+STAREC[] <- sapply(X = STAREC, FUN = clean.quotes)
+STAREC$GEARS <- sapply(X = STAREC$GEARS, FUN = clean.whitespace)
 
 
+#START QUERY CHAIN --------
+
+
+#Fish_Count_Step_1 ------------------------------------------------------------
 FC1 = subset(BGSREC, select = c("BIO_BGS", "CRUISEID", "STATIONID", "VESSEL", "CRUISE_NO",
                                 "CNT", "CNTEXP", "SAMPLE_BGS", "SELECT_BGS"))
 NT = subset(NameTrans, select = c("NODC_code", "TAXONOMIC", "major_group", "common_name",
@@ -44,8 +69,9 @@ FC1_NT = merge(FC1, NT, by.x = "BIO_BGS", by.y = "NODC_code", all.x = T)
 colnames(FC1_NT)[1] = "NODC_code"
 
 #major_group can be set as needed as well as the aggregate group.
-Fish_Cnt_1 = subset(FC1_NT, major_group == 'jellyfish' & TAXONOMIC == "AURELIA" | TAXONOMIC == "AURELIA AURITA")
+#Fish_Cnt_1 = subset(FC1_NT, major_group == 'jellyfish' & TAXONOMIC == "AURELIA" | TAXONOMIC == "AURELIA AURITA") #Depecrated to allow for selection of groups at the top of the script
 
+Fish_Cnt_1 = subset(FC1_NT, major_group %in% major.grp & TAXONOMIC %in% taxa)
 
 
 # Fish_Count_Step_2 ------------------------------------------------------------
@@ -205,6 +231,14 @@ setnames(Fish_Wt_5, old = "Avg_mean_WWT_g", new = "CruiseMean_WWT_g")
 
 STA = subset(STAREC, select = c("STATIONID", "CRUISEID", "VESSEL", "CRUISE_NO", "DECSLAT", "DECSLON", "DECELAT",
                                 "DECELON", "MO_DAY_YR", "DEPTH_SSTA", "DEPTH_ESTA", "VESSEL_SPD"))
+#fix data types from STA
+numeric.cols <- c("STATIONID", "CRUISEID", "VESSEL", "CRUISE_NO", "DECSLAT", "DECSLON", "DECELAT",
+                    "DECELON", "DEPTH_SSTA", "DEPTH_ESTA", "VESSEL_SPD")
+
+STA[,numeric.cols] = apply(STA[,numeric.cols], 2, function(x) as.numeric((x))) #make numeric columns actually numeric data type
+STA$MO_DAY_YR <- as.POSIXct(strptime(x = STA$MO_DAY_YR, format = "%Y-%m-%d")) #change data type for date field
+STA[rowSums(is.na(STA)) != ncol(STA), ] #Remove records where ALL fields have NA values
+
 ENV = subset(ENVREC, select = c("STATIONID", "DEPTH_EWTR", "DEPTH_EMAX"))
 
 
