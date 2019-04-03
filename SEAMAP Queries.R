@@ -235,14 +235,13 @@ STA = subset(STAREC, select = c("STATIONID", "CRUISEID", "VESSEL", "CRUISE_NO", 
 numeric.cols <- c("STATIONID", "CRUISEID", "VESSEL", "CRUISE_NO", "DECSLAT", "DECSLON", "DECELAT",
                     "DECELON", "DEPTH_SSTA", "DEPTH_ESTA", "VESSEL_SPD")
 
-STA[,numeric.cols] = apply(STA[,numeric.cols], 2, function(x) as.numeric((x))) #make numeric columns actually numeric data type
+STA[,numeric.cols] = suppressWarnings(apply(STA[,numeric.cols], 2, function(x) as.numeric((x)))) #make numeric columns actually numeric data type
 STA$MO_DAY_YR <- as.POSIXct(strptime(x = STA$MO_DAY_YR, format = "%Y-%m-%d")) #change data type for date field
-STA[rowSums(is.na(STA)) != ncol(STA), ] #Remove records where ALL fields have NA values
+STA <- STA[rowSums(is.na(STA)) != ncol(STA), ] #Remove records where ALL fields have NA values
 
 ENV = subset(ENVREC, select = c("STATIONID", "DEPTH_EWTR", "DEPTH_EMAX"))
 
-
-STA$MO_DAY_YR = as.Date(STA$MO_DAY_YR, "%m/%d/%y")
+#STA$MO_DAY_YR = as.Date(STA$MO_DAY_YR, "%m/%d/%y")
 
 StationInfo_1 = merge(STA, ENV, by = "STATIONID")
 
@@ -296,6 +295,34 @@ StationInfo_1$DEPTH_SSTAvsESTA_m = with(StationInfo_1,
 StationInfo_1$Use_Depth_m = with(StationInfo_1,
                                  ifelse(DEPTH_SSTAvsESTA_m >= DEPTHEMAXvsEWTR_m | is.na(DEPTHEMAXvsEWTR_m),
                                         DEPTH_SSTAvsESTA_m, DEPTHEMAXvsEWTR_m))
+
+
+# add some depths back in using spatial join from ArcMAp
+# Data from ArcMap Spatial Join
+j <- fread("jelly_inshore_20m_NULL_depth_4km_join.txt", stringsAsFactors = F, header = T)
+ji <- j[,c("stationid", "depth_m_12","year", "month", "day")]
+ji <- rename(ji, c("depth_m_12" = "Use_Depth_m_Arc"))
+ji <- rename(ji, c("stationid" = "STATIONID"))
+ji <- rename(ji, c("year" = "Year"))
+ji <- rename(ji, c("month" = "Month"))
+ji <- rename(ji, c("day" = "Day"))
+
+j <- fread("jelly_shelf_200m_NULL_depth_4km_join.txt", stringsAsFactors = F, header = T)
+js <- j[,c("stationid", "depth_m_12","year", "month", "day")]
+js <- rename(js, c("depth_m_12" = "Use_Depth_m_Arc"))
+js <- rename(js, c("stationid" = "STATIONID"))
+js <- rename(js, c("year" = "Year"))
+js <- rename(js, c("month" = "Month"))
+js <- rename(js, c("day" = "Day"))
+
+ja <- rbind(ji,js)
+
+StationInfo_1 <- merge(x = StationInfo_1, y = ja, by = c("STATIONID", "Year", "Month", "Day"), all.x = T)
+
+StationInfo_1$Use_Depth_m = with(StationInfo_1,
+                                     ifelse(test = is.na(Use_Depth_m), yes = ifelse(is.na(Use_Depth_m_Arc), yes = NA, no = Use_Depth_m_Arc), no = Use_Depth_m))
+
+StationInfo_1$Use_Depth_m_Arc <- NULL
 
 StationInfo_1$Subregion_Depth = with(StationInfo_1,
                                      ifelse(Use_Depth_m <= 20, "1_inshore",ifelse(is.na(Use_Depth_m), NA,
