@@ -24,7 +24,7 @@ clean.whitespace<- function(y){
 
 # Set specific interest groups from Name Translator Table ----
 NameTrans = read_xlsx(path = 'NameTranslator_table201305.xlsx')
-View(NameTrans)
+#View(NameTrans)
 
 major.grp = "jellyfish"
 taxa = c("AURELIA","AURELIA AURITA")
@@ -130,14 +130,15 @@ NT2$mean_WWT_g = as.numeric(NT2$mean_WWT_g)
 
 Fish_Wt_1 = merge(NT2, FW1, by.x ="NODC_code" , by.y = "BIO_GLF")
 
-Fish_Wt_1 = subset(Fish_Wt_1, major_group == 'jellyfish' & TAXONOMIC == "AURELIA" | TAXONOMIC == "AURELIA AURITA")
+#Fish_Wt_1 = subset(Fish_Wt_1, major_group == 'jellyfish' & TAXONOMIC == "AURELIA" | TAXONOMIC == "AURELIA AURITA")
+Fish_Wt_1 = subset(Fish_Wt_1, major_group %in% major.grp & TAXONOMIC %in% taxa)
+
 
 #Create Measurement type column
 Fish_Wt_1$Measurement_Type = with(Fish_Wt_1, ifelse(MEASCD_GLF == 18, "TL", ifelse(MEASCD_GLF == 2, "SL", "FL")))
 
 
 #Creating use_TL_cm column
-
 Fish_Wt_1 <- ddply(Fish_Wt_1, .(Measurement_Type), function(x){
 
   m_type <- unique(x$Measurement_Type)
@@ -157,7 +158,7 @@ Fish_Wt_1 <- ddply(Fish_Wt_1, .(Measurement_Type), function(x){
 
   return(x)
 
-}, .progress = "text")
+}, .progress = "text", .inform = T)
 
 
 #Creating use_SL_cm and use_FL_cm columns
@@ -187,7 +188,7 @@ Fish_Wt_1 = ddply(Fish_Wt_1, .(LW_type), function(y) {
 
   }
   return(y)
-}, .progress = "text")
+}, .progress = "text", .inform = T)
 
 # Fish_Weight_Step_2 ------------------------------------------------------
 
@@ -198,8 +199,6 @@ Fish_Wt_2 = ddply(Fish_Wt_1, c("NODC_code", "TAXONOMIC", "common_name", "AggGrp_
                 .progress = "text", .inform = T)
 
 setnames(Fish_Wt_2, old = "mean_WWT_g", new = "ForcedMean_WWT_g")
-
-
 
 # Fish_Weight_Step_3 ------------------------------------------------------
 
@@ -490,36 +489,36 @@ SI2 = subset(StationInfo_3, select = c("DECSLAT", "DECSLON", "DECELAT", "DECELON
                                        "CRUISEID", "STATIONID", "Year", "Month", "Day",
                                        "Subregion_Depth", "Subregion_alongshore", "Use_Depth_m"))
 
-AURELIA = merge(Fish_Biomass_3, SI2, by = c("STATIONID", "CRUISEID", "CRUISE_NO", "Year", "Month", "Day",
+result = merge(Fish_Biomass_3, SI2, by = c("STATIONID", "CRUISEID", "CRUISE_NO", "Year", "Month", "Day",
                                             "Subregion_Depth", "Subregion_alongshore"), all.y = T)
 
 
 
 #Changing NAs to zeros for population or biomass density columns for stations at which none of the target group was collected.
 
-AURELIA$Use_Pop_Den_no_m2 = with(AURELIA,
+result$Use_Pop_Den_no_m2 = with(result,
                                  ifelse(is.na(Use_Pop_Den_no_m2), 0,Use_Pop_Den_no_m2))
 
-AURELIA$Use_Biomass_Den_kg_m2 = with(AURELIA,
+result$Use_Biomass_Den_kg_m2 = with(result,
                                  ifelse(is.na(Use_Biomass_Den_kg_m2), 0,Use_Biomass_Den_kg_m2))
 
-AURELIA$SumofUse_Count = with(AURELIA,
+result$SumofUse_Count = with(result,
                                  ifelse(is.na(SumofUse_Count), 0,SumofUse_Count))
 
-AURELIA$SumofUse_Tot_WWT_kg = with(AURELIA,
+result$SumofUse_Tot_WWT_kg = with(result,
                                  ifelse(is.na(SumofUse_Tot_WWT_kg), 0,SumofUse_Tot_WWT_kg))
 
-AURELIA$Pop_Den_Pelagic_no_m2 = with(AURELIA,
+result$Pop_Den_Pelagic_no_m2 = with(result,
                                  ifelse(is.na(Pop_Den_Pelagic_no_m2), 0,Pop_Den_Pelagic_no_m2))
 
-AURELIA$Pop_Den_Demersal_no_m2 = with(AURELIA,
+result$Pop_Den_Demersal_no_m2 = with(result,
                                  ifelse(is.na(Pop_Den_Demersal_no_m2), 0,Pop_Den_Demersal_no_m2))
 
-AURELIA$Biomass_Den_Pelagic_kg_m2 = with(AURELIA,
+result$Biomass_Den_Pelagic_kg_m2 = with(result,
                                  ifelse(is.na(Biomass_Den_Pelagic_kg_m2), 0,Biomass_Den_Pelagic_kg_m2))
 
-AURELIA$Biomass_Den_Demersal_kg_m2 = with(AURELIA,
+result$Biomass_Den_Demersal_kg_m2 = with(result,
                                  ifelse(is.na(Biomass_Den_Demersal_kg_m2), 0,Biomass_Den_Demersal_kg_m2))
 
-#write.csv(AURELIA, "Aurelia_SEAMAP.csv")
+write.csv(x = result, file = paste0(taxa[1], "_SEAMAP.csv"), row.names = F)
 
