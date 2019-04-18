@@ -14,10 +14,13 @@ d <- as.data.frame(fread(input = "Aurelia_SEAMAP.csv", stringsAsFactors = F, sep
 
 d$AggGrp_20130430 <- ifelse(test = is.na(d$AggGrp_20130430), "large jellyfish", d$AggGrp_20130430)
 
-d <- d[,c("AggGrp_20130430","Year", "Month", "Day","STATIONID", "Use_Pop_Den_no_m2","Use_Biomass_Den_kg_m2","Use_Depth_m", "DECSLAT","DECSLON","DECELAT","DECELON"),]
+d <- d[,c("AggGrp_20130430","Year", "Month", "Day","STATIONID","Subregion_Depth","Subregion_alongshore",
+          "Use_Pop_Den_no_m2","Use_Biomass_Den_kg_m2","Use_Depth_m", "DECSLAT","DECSLON","DECELAT","DECELON"),]
+
 names(d) <- tolower(names(d))
 d <- plyr::rename(d, c("use_depth_m" = "depth_m"))
 d <- plyr::rename(d, c("agggrp_20130430" = "agg_grp"))
+d <- d[!is.na(d$depth_m),] #Aurelia: no of records drops from 28,622 to 26,740 (lost 6.6% of total records)
 
 d$biomass_den_kg.m3 <- d$use_biomass_den_kg_m2*d$depth_m
 d$pop_den_no.m3 <- d$use_pop_den_no_m2*d$depth_m
