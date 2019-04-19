@@ -465,7 +465,7 @@ SI3 = subset(StationInfo_3, select = c("STATIONID", "Subregion_alongshore", "Sub
 Fish_Biomass_3 = merge(Fish_Biomass_2, SI3, by = "STATIONID")
 
 #Remove unneeded columns
-Fish_Biomass_3[, c("Use_Count", "Use_Tot_WWT_kg")] = list(NULL)
+#Fish_Biomass_3[, c("Use_Count", "Use_Tot_WWT_kg")] = list(NULL)
 
 #Population density
 Fish_Biomass_3$Pop_Den_Demersal_no_m2 = Fish_Biomass_3$SumofUse_Count/Fish_Biomass_3$AreaFiltered_Demersal_m2
@@ -493,7 +493,8 @@ SI2 = subset(StationInfo_3, select = c("DECSLAT", "DECSLON", "DECELAT", "DECELON
 result = merge(Fish_Biomass_3, SI2, by = c("STATIONID", "CRUISEID", "CRUISE_NO", "Year", "Month", "Day",
                                             "Subregion_Depth", "Subregion_alongshore"), all.y = T)
 
-
+# remove the 3 records with infinite values due to zeros in volume filtered calculation
+result <- result[!is.infinite(result$Use_Biomass_Den_kg_m2),]
 
 #Changing NAs to zeros for population or biomass density columns for stations at which none of the target group was collected.
 
