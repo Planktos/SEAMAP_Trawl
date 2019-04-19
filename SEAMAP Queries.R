@@ -47,7 +47,7 @@ CRUISES = read.csv('20190329_SEAMAP_csv/CRUISES.csv')
 
 #cleanup for STAREC ---------
 # get field names
-s.names = read.csv(file = "20190329_SEAMAP_csv/STAREC_rev20190402.csv", stringsAsFactors = F, header = T)
+s.names = suppressWarnings(read.csv(file = "20190329_SEAMAP_csv/STAREC_rev20190402.csv", stringsAsFactors = F, header = T))
 names(STAREC) <- names(s.names)
 rm(s.names)
 
@@ -227,7 +227,6 @@ setnames(Fish_Wt_5, old = "Avg_mean_WWT_g", new = "CruiseMean_WWT_g")
 
 
 # StationInfo_Step_1 ------------------------------------------------------
-
 STA = subset(STAREC, select = c("STATIONID", "CRUISEID", "VESSEL", "CRUISE_NO", "DECSLAT", "DECSLON", "DECELAT",
                                 "DECELON", "MO_DAY_YR", "DEPTH_SSTA", "DEPTH_ESTA", "VESSEL_SPD"))
 #fix data types from STA
@@ -300,28 +299,31 @@ StationInfo_1$Use_Depth_m = with(StationInfo_1,
 # Data from ArcMap Spatial Join
 j <- fread("jelly_inshore_20m_NULL_depth_4km_join.txt", stringsAsFactors = F, header = T)
 ji <- j[,c("stationid", "depth_m_12","year", "month", "day")]
-ji <- rename(ji, c("depth_m_12" = "Use_Depth_m_Arc"))
-ji <- rename(ji, c("stationid" = "STATIONID"))
-ji <- rename(ji, c("year" = "Year"))
-ji <- rename(ji, c("month" = "Month"))
-ji <- rename(ji, c("day" = "Day"))
+ji <- plyr::rename(ji, c("depth_m_12" = "Use_Depth_m_Arc"))
+ji <- plyr::rename(ji, c("stationid" = "STATIONID"))
+ji <- plyr::rename(ji, c("year" = "Year"))
+ji <- plyr::rename(ji, c("month" = "Month"))
+ji <- plyr::rename(ji, c("day" = "Day"))
 
 j <- fread("jelly_shelf_200m_NULL_depth_4km_join.txt", stringsAsFactors = F, header = T)
 js <- j[,c("stationid", "depth_m_12","year", "month", "day")]
-js <- rename(js, c("depth_m_12" = "Use_Depth_m_Arc"))
-js <- rename(js, c("stationid" = "STATIONID"))
-js <- rename(js, c("year" = "Year"))
-js <- rename(js, c("month" = "Month"))
-js <- rename(js, c("day" = "Day"))
+js <- plyr::rename(js, c("depth_m_12" = "Use_Depth_m_Arc"))
+js <- plyr::rename(js, c("stationid" = "STATIONID"))
+js <- plyr::rename(js, c("year" = "Year"))
+js <- plyr::rename(js, c("month" = "Month"))
+js <- plyr::rename(js, c("day" = "Day"))
 
 ja <- rbind(ji,js)
 
 StationInfo_1 <- merge(x = StationInfo_1, y = ja, by = c("STATIONID", "Year", "Month", "Day"), all.x = T)
 
 StationInfo_1$Use_Depth_m = with(StationInfo_1,
-                                     ifelse(test = is.na(Use_Depth_m), yes = ifelse(is.na(Use_Depth_m_Arc), yes = NA, no = Use_Depth_m_Arc), no = Use_Depth_m))
-
+                                     ifelse(test = is.na(Use_Depth_m), yes = ifelse(is.na(Use_Depth_m_Arc),
+                                                                                    yes = NA, no = Use_Depth_m_Arc), no = Use_Depth_m))
 StationInfo_1$Use_Depth_m_Arc <- NULL
+
+StationInfo_1 <- StationInfo_1[StationInfo_1$Use_Depth_m > 0,] #remove any 'zero' depth stations as not legit
+StationInfo_1 <- StationInfo_1[!is.na(StationInfo_1$Use_Depth_m),] #remove any 'NA' depth stations as not legit
 
 StationInfo_1$Subregion_Depth = with(StationInfo_1,
                                      ifelse(Use_Depth_m <= 20, "1_inshore",ifelse(is.na(Use_Depth_m), NA,
@@ -329,7 +331,6 @@ StationInfo_1$Subregion_Depth = with(StationInfo_1,
 #Create corrected vessel speed column
 
 StationInfo_1$VESSEL_SPD_corrected = with(StationInfo_1, ifelse(is.na(VESSEL_SPD), 3, VESSEL_SPD))
-
 
 
 # StationInfo_Step_2 ------------------------------------------------------
