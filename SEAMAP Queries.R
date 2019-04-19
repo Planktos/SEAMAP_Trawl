@@ -215,15 +215,15 @@ Fish_Wt_4 = ddply(Fish_Wt_3, c("NODC_code", "TAXONOMIC", "common_name", "AggGrp_
                   Count_mean_WWT_g = length(mean_WWT_g),
                   .progress = "text", .inform = T )
 
-
 # Fish_Weight_Step_5 ------------------------------------------------------
 
 FW4 = subset(Fish_Wt_4, select = c("NODC_code","Avg_mean_WWT_g"))
 
-Fish_Wt_5 = merge(FW4, Fish_Wt_3, by = "NODC_code")
+FW4 <- FW4 %>% distinct(NODC_code, .keep_all = TRUE) #remove any duplicated average weights for each NODC code
+
+Fish_Wt_5 = merge(x = FW4, y = Fish_Wt_3, by = "NODC_code", all.y = T)
 
 setnames(Fish_Wt_5, old = "Avg_mean_WWT_g", new = "CruiseMean_WWT_g")
-
 
 
 # StationInfo_Step_1 ------------------------------------------------------
@@ -380,10 +380,11 @@ StationInfo_3$AreaFiltered_Demersal_m2 = StationInfo_3$VolumeFiltered_Demersal_m
 FW5 = subset(Fish_Wt_5, select = c("STATIONID", "CRUISEID", "VESSEL", "CRUISE_NO", "NODC_code",
                                    "Total_WWT_g", "mean_WWT_g", "CruiseMean_WWT_g", "ForcedMean_WWT_g"))
 
-Fish_Biomass_1 = merge(Fish_Cnt_5, FW5, by = c("STATIONID", "CRUISEID", "VESSEL", "CRUISE_NO"), all.x = T)
+Fish_Biomass_1 = merge(x = Fish_Cnt_5, y = FW5,
+                       by = c("STATIONID", "CRUISEID", "VESSEL", "CRUISE_NO", "NODC_code"),
+                       all.x = T)
 
 #Create Use_Count column
-
 Fish_Biomass_1$Use_Count = with(Fish_Biomass_1, ifelse(is.na(Tot_Extrap_Count), 0, Tot_Extrap_Count))
 
 
@@ -521,6 +522,10 @@ result$Biomass_Den_Pelagic_kg_m2 = with(result,
 
 result$Biomass_Den_Demersal_kg_m2 = with(result,
                                  ifelse(is.na(Biomass_Den_Demersal_kg_m2), 0,Biomass_Den_Demersal_kg_m2))
+
+result$Season = with(result, ifelse(result$Month >= 5 & result$Month <= 8, "Summer", "Fall"))
+result$Count_Use_Count = with(result, ifelse(is.na(result$Count_Use_Count), 0, result$Count_Use_Count))
+
 
 write.csv(x = result, file = paste0(taxa[1], "_SEAMAP.csv"), row.names = F)
 
