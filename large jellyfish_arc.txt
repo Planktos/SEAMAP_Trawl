@@ -1,4 +1,4 @@
-"agg_grp"	"year"	"month"	"day"	"stationid"	"subregion_depth"	"subregion_alongshore"	"use_pop_den_no_m2"	"use_biomass_den_kg_m2"	"depth_m"	"biomass_den_kg.m3"	"pop_den_no.m3"	"decslat_ctr"	"decslon_ctr"
+"agg_grp"	"year"	"month"	"day"	"stationid"	"subregion_depth"	"subregion_alongshore"	"use_pop_den_no_m2"	"use_biomass_den_kg_m2"	"depth_m"	"biomass_den_kg_m3"	"pop_den_no_m3"	"decslat_ctr"	"decslon_ctr"
 "large jellyfish"	2003	10	11	4	"2_shelf"	"1_Tex"	0	0	20.3	0	0	26.0965	-97.083
 "large jellyfish"	2003	10	11	5	"1_inshore"	"1_Tex"	0.025041174359465	0.00856408163093703	16	0.137025306094992	0.40065878975144	26.1245	-97.1375
 "large jellyfish"	2003	10	11	6	"1_inshore"	"1_Tex"	0	0	15.4	0	0	26.2235	-97.1515
