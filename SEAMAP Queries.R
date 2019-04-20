@@ -527,5 +527,66 @@ result$Season = with(result, ifelse(result$Month >= 5 & result$Month <= 8, "Summ
 result$Count_Use_Count = with(result, ifelse(is.na(result$Count_Use_Count), 0, result$Count_Use_Count))
 
 
-write.csv(x = result, file = paste0(taxa[1], "_SEAMAP.csv"), row.names = F)
+#fix some weird values in lat and lon coordinates
+f <- result[result$DECSLON > 0 & !is.na(result$DECSLON),]
+fid <- f$stationid
 
+f <- ddply(f, .(STATIONID), function(h){
+
+  DECSLON <- as.numeric(getElement(h, "DECSLON"))
+
+  if(!is.na(DECSLON)){
+
+    if(DECSLON > 35){
+
+      h$DECELAT <- NA
+      h$DECSLON <- NA
+      h$DECELAT <- NA
+      h$DECELON <- NA
+
+    } else {
+
+      h$DECSLAT <- h$DECSLON
+      h$DECSLON <- h$DECELAT
+      h$DECELAT <- h$DECELON
+      h$DECELON <- NA
+    }
+  }
+
+  if(!is.na(h$DECELON)){
+
+    if(h$DECELON > 0){
+      h$DECELON <- NA
+    }
+
+  }
+
+  if(!is.na(h$DECSLON)){
+
+    if(h$DECSLON > 0){
+      h$DECSLON <- NA
+    }
+  }
+
+  if(!is.na(h$DECELAT)){
+
+    if(h$DECELAT < 0){
+      h$DECELAT <- NA
+    }
+  }
+
+  if(!is.na(h$DECSLAT)){
+
+    if(h$DECSLAT > 35){
+      h$DECSLAT <- NA
+    }
+  }
+
+  return(h)
+}, .progress = "text", .inform = T)
+
+'%!in%' <- function(x,y)!('%in%'(x,y))
+result <- result[result$stationid %!in% fid, ]
+result <- rbind(result,f)
+
+write.csv(x = result, file = paste0(taxa[1], "_SEAMAP.csv"), row.names = F)
