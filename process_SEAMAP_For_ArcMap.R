@@ -30,11 +30,11 @@ if(length(grp.name) == 1){
 
   }
 
-d$biomass_den_kg.m3 <- d$use_biomass_den_kg_m2*d$depth_m
-d$pop_den_no.m3 <- d$use_pop_den_no_m2*d$depth_m
+d$biomass_den_kg_m3 <- d$use_biomass_den_kg_m2*d$depth_m
+d$pop_den_no_m3 <- d$use_pop_den_no_m2*d$depth_m
 
-d$biomass_den_kg.m3 <- ifelse(test = is.na(d$biomass_den_kg.m3), 0, d$biomass_den_kg.m3)
-d$pop_den_no.m3 <- ifelse(test = is.na(d$pop_den_no.m3), 0, d$pop_den_no.m)
+d$biomass_den_kg_m3 <- ifelse(test = is.na(d$biomass_den_kg_m3), 0, d$biomass_den_kg_m3)
+d$pop_den_no_m3 <- ifelse(test = is.na(d$pop_den_no_m3), 0, d$pop_den_no_m3)
 
 f_mean_lat <- function(x){
 
@@ -69,4 +69,6 @@ d$decslon_ctr <- apply(X = d, MARGIN = 1, FUN = f_mean_lon)
 
 d[, c("decslat", "decelat", "decslon", "decelon")] = list(NULL)
 
-write.table(d, file = paste0(unique(d$agg_grp), "_arc.txt"), sep =  "\t", col.names = T, row.names = F)
+d <- d %>% select(stationid, agg_grp, year, month, day, depth_m, decslat_ctr, decslon_ctr, everything())
+
+write.csv(x = d, file = paste0(unique(d$agg_grp), "_arc.csv"), row.names = F)
