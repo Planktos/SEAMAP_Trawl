@@ -528,16 +528,17 @@ result$Count_Use_Count = with(result, ifelse(is.na(result$Count_Use_Count), 0, r
 
 
 #fix some weird values in lat and lon coordinates
-f <- result[result$DECSLON > 0 & !is.na(result$DECSLON),]
-fid <- f$stationid
+f <- result[result$DECSLON > 0 | result$DECSLAT > 35,]
+
+fid <- f$STATIONID
 
 f <- ddply(f, .(STATIONID), function(h){
 
-  DECSLON <- as.numeric(getElement(h, "DECSLON"))
+  #DECSLON <- as.numeric(getElement(h, "DECSLON"))
 
-  if(!is.na(DECSLON)){
+  if(!is.na(h$DECSLON)){
 
-    if(DECSLON > 35){
+    if(h$DECSLON > 35){
 
       h$DECELAT <- NA
       h$DECSLON <- NA
@@ -585,8 +586,36 @@ f <- ddply(f, .(STATIONID), function(h){
   return(h)
 }, .progress = "text", .inform = T)
 
+f2 <- result[result$DECELON > 0 | result$DECELAT < 10,]
+fid2 <- f2$STATIONID
+
+f2 <- ddply(f2, .(STATIONID), function(h){
+
+  #DECSLON <- as.numeric(getElement(h, "DECSLON"))
+
+  if(!is.na(h$DECELAT)){
+
+    if(h$DECELAT < 10){
+
+      h$DECELAT <- NA
+    }
+  }
+
+  if(!is.na(h$DECELON)){
+
+    if(h$DECELON > 0){
+      h$DECELON <- NA
+    }
+
+  }
+
+  return(h)
+}, .progress = "text", .inform = T)
+
+
+
 '%!in%' <- function(x,y)!('%in%'(x,y))
-result <- result[result$stationid %!in% fid, ]
+result <- result[result$STATIONID %!in% fid, ]
 result <- rbind(result,f)
 
 write.csv(x = result, file = paste0(taxa[1], "_SEAMAP.csv"), row.names = F)
