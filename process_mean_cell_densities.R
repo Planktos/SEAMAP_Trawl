@@ -59,8 +59,7 @@ a <- plyr::rename(a, c("latitude" = "decslat_cell_ctr"))
 m <- merge(d, a ,by = "cell_id")
 m <- plyr::rename(m, c("shape_area" = "area_m2"))
 
-#calculate annual mean biomass & population density in each fish net cell | STEP 2 in JMP workflow
-
+#calculate annual mean biomass & population density in each fish net cell ; STEP 2 in JMP workflow
 yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 
   year <- unique(x$year)
@@ -69,9 +68,6 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
   area_m2 <- unique(x$area_m2)
   decslat_cell_ctr <- unique(x$decslat_cell_ctr)
   decslon_cell_ctr <- unique(x$decslon_cell_ctr)
-  subregion_depth <- unique(x$subregion_depth)
-  subregion_alongshore <- unique(x$subregion_alongshore)
-
 
   if(nrow(x)>0){
 
@@ -90,14 +86,17 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
     n_obs <- nrow(x)
 
     cell_area_m2 <- unique(x$area_m2)
+    use_pop_den_no_m2 <- x$use_pop_den_no_m2
 
-    total_bio_wwt_kg_mean <- bio_mean_kg*area_m2
-    total_bio_wwt_kg_var <- bio_var_kg*area_m2
+    total_bio_wwt_kg_mean <- bio_mean_kg*cell_area_m2
+    total_bio_wwt_kg_var <- bio_var_kg*cell_area_m2
 
-    total_indiv_mean <- pop_mean_no_m3*area_m2
-    total_indiv_var <- pop_var_no_m3*area_m2
+    total_indiv_mean <- mean(use_pop_den_no_m2)*cell_area_m2
+    total_indiv_var <- var(use_pop_den_no_m2)*cell_area_m2
 
-    y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, area_m2, year, agg_grp, subregion_depth, subregion_alongshore, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
+    mean_depth_m <- mean(x$depth_m)
+
+    y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, mean_depth_m, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
                     pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv_mean, total_indiv_var, n_obs)
 
     } else {
@@ -108,7 +107,7 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 
     pop_mean_no_m3 <- 0
     pop_var_no_m3 <- 0
-    pop_CI95_no_m3 <-0
+    pop_CI95_no_m3 <- 0
 
     n_obs <- nrow(x)
 
@@ -117,10 +116,12 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
     total_bio_wwt_kg_mean <- bio_mean_kg*area_m2
     total_bio_wwt_kg_var <- bio_var_kg*area_m2
 
-    total_indiv_mean <- pop_mean_no_m3*area_m2
-    total_indiv_var <- pop_var_no_m3*area_m2
+    total_indiv_mean <- 0
+    total_indiv_var <- NA
 
-    y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, area_m2, year, agg_grp, subregion_depth, subregion_alongshore, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
+    mean_depth_m <- mean(x$depth_m)
+
+    y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, mean_depth_m, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
                     pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv_mean, total_indiv_var, n_obs)
 
 
@@ -131,6 +132,13 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
   return(y)
 
 }, .progress = "text", .inform = T)
+
+yr_cell_stats$subregion_alongshore = with(yr_cell_stats, ifelse(decslon_cell_ctr < -94, "1_Tex",
+                                                                ifelse(decslon_cell_ctr > -88, "3_Fla", "2_Lou")))
+
+yr_cell_stats$subregion_Depth = with(yr_cell_stats,
+                                     ifelse(mean_depth_m <= 20, "1_inshore",ifelse(is.na(mean_depth_m), NA,
+                                                                                  ifelse(mean_depth_m <= 200, "2_shelf", "3_oceanic"))))
 
 yr_cell_stats$agg_grp <- as.character(yr_cell_stats$agg_grp)
 
