@@ -76,11 +76,13 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
     bio_stat <- f_delta_stat(x = x$biomass_den_kg_m3)
     bio_mean_kg <- bio_stat$mean
     bio_var_kg <- bio_stat$variance
+    bio_sd_kg <- sqrt(bio_var_kg)
     bio_CI95_kg <- bio_stat$CI95
 
     pop_stat <- f_delta_stat(x = x$pop_den_no_m3)
     pop_mean_no_m3 <- pop_stat$mean
     pop_var_no_m3 <- pop_stat$variance
+    pop_sd_no_m3 <- sqrt(pop_var_no_m3)
     pop_CI95_no_m3 <- pop_stat$CI95
 
     n_obs <- nrow(x)
@@ -90,40 +92,47 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 
     total_bio_wwt_kg_mean <- bio_mean_kg*cell_area_m2
     total_bio_wwt_kg_var <- bio_var_kg*cell_area_m2
+    total_bio_wwt_kg_sd <- sqrt(total_bio_wwt_kg_var)
 
     total_indiv_mean <- mean(use_pop_den_no_m2)*cell_area_m2
     total_indiv_var <- var(use_pop_den_no_m2)*cell_area_m2
+    total_indiv_sd <- sqrt(total_indiv_var)
 
     mean_depth_m <- mean(x$depth_m)
 
-    y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, mean_depth_m, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
-                    pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv_mean, total_indiv_var, n_obs)
+    y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, mean_depth_m, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_sd_kg, bio_CI95_kg,
+                    total_bio_wwt_kg_mean, total_bio_wwt_kg_var, total_bio_wwt_kg_sd,
+                    pop_mean_no_m3, pop_var_no_m3, pop_sd_no_m3,pop_CI95_no_m3, total_indiv_mean, total_indiv_var,total_indiv_sd, n_obs)
 
     } else {
 
     bio_mean_kg <- 0
-    bio_var_kg <- 0
-    bio_CI95_kg <- 0
+    bio_var_kg <- NA
+    bio_sd_kg <- NA
+    bio_CI95_kg <- NA
 
     pop_mean_no_m3 <- 0
-    pop_var_no_m3 <- 0
-    pop_CI95_no_m3 <- 0
+    pop_var_no_m3 <- NA
+    pop_sd_no_m3 <- NA
+    pop_CI95_no_m3 <- NA
 
     n_obs <- nrow(x)
 
     cell_area_m2 <- unique(x$area_m2)
 
     total_bio_wwt_kg_mean <- bio_mean_kg*area_m2
-    total_bio_wwt_kg_var <- bio_var_kg*area_m2
+    total_bio_wwt_kg_var <- NA
+    total_bio_wwt_kg_sd <- NA
 
     total_indiv_mean <- 0
     total_indiv_var <- NA
+    total_indiv_sd <- NA
 
     mean_depth_m <- mean(x$depth_m)
 
-    y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, mean_depth_m, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_CI95_kg, total_bio_wwt_kg_mean, total_bio_wwt_kg_var,
-                    pop_mean_no_m3, pop_var_no_m3, pop_CI95_no_m3, total_indiv_mean, total_indiv_var, n_obs)
-
+    y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, mean_depth_m, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_sd_kg, bio_CI95_kg,
+                    total_bio_wwt_kg_mean, total_bio_wwt_kg_var, total_bio_wwt_kg_sd,
+                    pop_mean_no_m3, pop_var_no_m3, pop_sd_no_m3,pop_CI95_no_m3, total_indiv_mean, total_indiv_var,total_indiv_sd, n_obs)
 
     }
 
@@ -136,7 +145,7 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
 yr_cell_stats$subregion_alongshore = with(yr_cell_stats, ifelse(decslon_cell_ctr < -94, "1_Tex",
                                                                 ifelse(decslon_cell_ctr > -88, "3_Fla", "2_Lou")))
 
-yr_cell_stats$subregion_Depth = with(yr_cell_stats,
+yr_cell_stats$subregion_depth = with(yr_cell_stats,
                                      ifelse(mean_depth_m <= 20, "1_inshore",ifelse(is.na(mean_depth_m), NA,
                                                                                   ifelse(mean_depth_m <= 200, "2_shelf", "3_oceanic"))))
 
@@ -178,7 +187,7 @@ yr_stats <- ddply(yr_cell_stats, .variables = c("year"), function(x){
 
       pop_stat <- f_delta_stat(x = x$pop_mean_no_m3)
       pop_delta_mean_no_m3 <- pop_stat$mean
-      pop_delta_var_no_m3 <-  sum(x$pop_var_no_m3, na.rm = T)
+      pop_delta_var_no_m3 <- sum(x$pop_var_no_m3, na.rm = T)
       pop_delta_sd_no_m3 <- sqrt(pop_delta_var_no_m3)
 
       pop_wt_mean_no_m3 <- wtd.mean(x = x$pop_mean_no_m3, weights = x$n_obs)
