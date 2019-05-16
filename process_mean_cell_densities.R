@@ -13,6 +13,7 @@
 library(plyr)
 library(dplyr)
 library(data.table)
+library(Hmisc)
 source("f_delta_stats.R")
 
 
@@ -24,7 +25,28 @@ names(d) <- tolower(names(d))
 d <- d[,c(4:length((d)))]
 d <- plyr::rename(d, c("join_fid" = "cell_id"))
 
-#REad in Cell Areas -----
+f_get_season <- function(x){
+
+  m <- as.numeric(getElement(x, "month"))
+
+  if(m > 11 & m < 3){
+    season <- "winter"
+  } else if(m > 9 & m < 11){
+    season <- "fall"
+  } else if(m > 4 & m < 9){
+   season <- "summer"
+  } else {
+    season <- "soring"
+  }
+  return(season)
+  rm(m)
+}
+d$season <- apply(X = d, MARGIN = 1, FUN = f_get_season)
+
+#subset summery & fall seasons
+d <- d[d$season == "fall" | d$season == "summer",]
+
+#Read in Cell Areas -----
 a <- as.data.frame(fread(input = "15minCellArea.txt", sep = ",", stringsAsFactors = F))
 names(a) <- tolower(names(a))
 
@@ -129,44 +151,75 @@ yr_stats <- ddply(yr_cell_stats, .variables = c("year"), function(x){
   year <- unique(x$year)
   agg_grp <- unique(x$agg_grp)
 
-  if(nrow(x)>0){
+  n_cells <- length(unique(x$cell_id))
+
+ if(n_cells>0){
 
     if(sum(x$total_bio_wwt_kg_mea)>0){
 
+      n_stns <- sum(x$n_obs)
+
       bio_stat <- f_delta_stat(x = x$total_bio_wwt_kg_mean)
       bio_delta_mean_kg <- bio_stat$mean
-      bio_wt_mean_kg <- weighted.mean(x = x$total_bio_wwt_kg_mean, w = x$n_obs)
-      bio_delta_var_kg <- sum(x$ total_bio_wwt_kg_var)
-      bio_delta_sd_kg <- bio_delta_var_kg^2
+      bio_delta_var_kg <- sum(x$total_bio_wwt_kg_var, na.rm = T)
+      bio_delta_sd_kg <- sqrt(bio_delta_var_kg)
+
+      bio_wt_mean_kg <- wtd.mean(x = x$total_bio_wwt_kg_mean, weights = x$n_obs)
+      bio_wt_var_kg <- wtd.var(x = x$total_bio_wwt_kg_mean, weights = x$n_obs)
+      bio_wt_sd_kg <- sqrt(bio_wt_var_kg)
 
       pop_stat <- f_delta_stat(x = x$pop_mean_no_m3)
       pop_delta_mean_no_m3 <- pop_stat$mean
-      pop_delta_var_no_m3 <-  sum(x$pop_var_no_m3)
-      pop_delta_sd_no_m3 <- pop_delta_var_no_m3^2
-      pop_wt_mean_no_m3 <- weighted.mean(x = x$pop_mean_no_m3, w = x$n_obs)
+      pop_delta_var_no_m3 <-  sum(x$pop_var_no_m3, na.rm = T)
+      pop_delta_sd_no_m3 <- sqrt(pop_delta_var_no_m3)
 
-      n_obs <- nrow(x)
+      pop_wt_mean_no_m3 <- wtd.mean(x = x$pop_mean_no_m3, weights = x$n_obs)
+      pop_wt_var_no_m3 <- wtd.var(x = x$pop_mean_no_m3, weights = x$n_obs)
+      pop_wt_sd_no_m3 <- sqrt(bio_wt_var_kg)
 
-      y <- data.frame(year, agg_grp, bio_wt_mean_kg, bio_delta_mean_kg, bio_delta_var_kg, bio_delta_sd_kg,
-                      pop_wt_mean_no_m3, pop_delta_mean_no_m3, pop_delta_var_no_m3, pop_delta_sd_no_m3, n_obs)
+      total_indiv_mean <- mean(x$total_indiv_mean)
+      total_indiv_var <- sum(x$total_indiv_var)
+      total_indiv_sd <- sqrt(x$total_indiv_var)
+
+      total_indiv_wt_mean <- wtd.mean(x = x$total_indiv_mean, weights = x$n_obs)
+      total_indiv_wt_var <- wtd.var(x = x$total_indiv_mean, weights = x$n_obs)
+      total_indiv_wt_sd <- sqrt(total_indiv_wt_var)
+
+      y <- data.frame(year, n_cells, n_stns, agg_grp, bio_wt_mean_kg, bio_wt_var_kg, bio_wt_sd_kg, bio_delta_mean_kg, bio_delta_var_kg, bio_delta_sd_kg,
+                      pop_wt_mean_no_m3, pop_wt_var_no_m3, pop_wt_sd_no_m3, pop_delta_mean_no_m3, pop_delta_var_no_m3, pop_delta_sd_no_m3, total_indiv_mean,
+                      total_indiv_var, total_indiv_sd, total_indiv_wt_mean, total_indiv_wt_var, total_indiv_wt_sd)
 
     } else {
 
+      n_stns <- sum(x$n_obs)
+
       bio_delta_mean_kg <- 0
       bio_delta_var_kg <-0
-      bio_delta_sd_kg <- bio_delta_var_kg^2
+      bio_delta_sd_kg <- sqrt(bio_delta_var_kg)
+
       bio_wt_mean_kg <- 0
+      bio_wt_var_kg <- NA
+      bio_wt_sd_kg <- NA
 
       pop_delta_mean_no_m3 <- 0
-      pop_delta_var_no_m3 <-  0
-      pop_delta_sd_no_m3 <- pop_delta_var_no_m3^2
+      pop_delta_var_no_m3 <-  NA
+      pop_delta_sd_no_m3 <- sqrt(pop_delta_var_no_m3)
+
       pop_wt_mean_no_m3 <- 0
+      pop_wt_var_no_m3 <- NA
+      pop_wt_sd_no_m3 <- NA
 
-      n_obs <- nrow(x)
+      total_indiv_mean <- 0
+      total_indiv_var <- NA
+      total_indiv_sd <- NA
 
-      y <- data.frame(year, agg_grp, bio_wt_mean_kg, bio_delta_mean_kg, bio_delta_var_kg, bio_delta_sd_kg,
-                      pop_wt_mean_no_m3, pop_delta_mean_no_m3, pop_delta_var_no_m3, pop_delta_sd_no_m3, n_obs)
+      total_indiv_wt_mean <- 0
+      total_indiv_wt_var <- NA
+      total_indiv_wt_sd <- NA
 
+      y <- data.frame(year, n_cells, n_stns, agg_grp, bio_wt_mean_kg, bio_wt_var_kg, bio_wt_sd_kg, bio_delta_mean_kg, bio_delta_var_kg, bio_delta_sd_kg,
+                      pop_wt_mean_no_m3, pop_wt_var_no_m3, pop_wt_sd_no_m3, pop_delta_mean_no_m3, pop_delta_var_no_m3, pop_delta_sd_no_m3, total_indiv_mean,
+                      total_indiv_var, total_indiv_sd, total_indiv_wt_mean, total_indiv_wt_var, total_indiv_wt_sd)
     }
 
   }
@@ -175,7 +228,21 @@ yr_stats <- ddply(yr_cell_stats, .variables = c("year"), function(x){
 
 }, .progress = "text", .inform = T)
 
-p <- plot(x=yr_stats$year, y=log(yr_stats$pop_wt_mean_no_m3), type = "b")
+p <- plot(x=yr_stats$year, y=log10(yr_stats$pop_delta_mean_no_m3+1), type = "b")
+
+yr_stats$log_delta_mean <- log(yr_stats$pop_delta_mean_no_m3+1)
+yr_stats$log_delta_sd <- log(yr_stats$pop_delta_sd_no_m3+1)
+yr_stats$log_delta_se <- log((yr_stats$pop_delta_sd_no_m3/sqrt(yr_stats$n_obs))+1)
+
+
+g <- ggplot(data = yr_stats) + geom_point(aes(y=log_delta_mean, x = year)) + geom_line(aes(y=log_delta_mean, x = year)) +
+  scale_x_continuous(name = "year", breaks = seq(1984,2018,2)) +
+  scale_y_continuous() +
+  coord_cartesian(ylim = c(0,1.5))
+
+  geom_ribbon(data = yr_stats, aes(x=year, ymin = (log_delta_mean - log_delta_se), ymax = (log_delta_mean + log_delta_se)), fill = "palegreen4", alpha = 0.5) +
+  coord_cartesian(ylim = c(0,1.5))
+
 p <- plot(x=yr_stats$year, y=yr_stats$pop_wt_mean_no_m3, type = "b")
 p <- plot(x=yr_stats$year, y=yr_stats$bio_delta_mean_kg, type = "b")
 
@@ -334,6 +401,10 @@ save(yr_shore_stats, file = "Aurelia_SEAMAP_GoM_region_time-series.Rdata")
   p <- plot(x=insh$year, y=insh$pop_wt_mean_no_m3, type = "b")
   p <- plot(x=insh$year, y=insh$bio_delta_mean_kg, type = "b")
 
+
+p <-  ggplot(data=y, aes(x=year, y=log(pop_wt_mean_no_m3+1))) + geom_line() + geom_point()
+
+
   model.insh <- lm(data = insh, formula = year ~ log(pop_wt_mean_no_m3+1))
   summary(model.insh) #Not Significant change over time
 
@@ -450,7 +521,7 @@ save(yr_shore_stats, file = "Aurelia_SEAMAP_GoM_region_time-series.Rdata")
   model.fl.insh <- lm(data = fl.insh, formula = year ~ log(pop_wt_mean_no_m3+1))
   summary(model.fl.insh) # Significant change over time, p = 0.00585
 
-  # L - SHELF
+  # FL - SHELF
   fl.shelf <- yr_depth_stats[yr_shore_depth_stats$subregion_depth == "2_shelf" & yr_shore_depth_stats$subregion_alongshore == "3_Fla",]
 
   p <- plot(x=fl.shelf$year, y=log(fl.shelf$pop_wt_mean_no_m3+1), type = "b")
