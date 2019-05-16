@@ -529,8 +529,9 @@ result$Count_Use_Count = with(result, ifelse(is.na(result$Count_Use_Count), 0, r
 
 #fix some weird values in lat and lon coordinates
 f <- result[result$DECSLON > 0 | result$DECSLAT > 35,]
-
+f <- f[!is.na(f$STATIONID),]
 fid <- f$STATIONID
+result <- result[result$STATIONID %!in% fid, ]
 
 f <- ddply(f, .(STATIONID), function(h){
 
@@ -587,35 +588,12 @@ f <- ddply(f, .(STATIONID), function(h){
 }, .progress = "text", .inform = T)
 
 f2 <- result[result$DECELON > 0 | result$DECELAT < 10,]
+f2 <- f2[!is.na(f2$STATIONID),]
 fid2 <- f2$STATIONID
 
-f2 <- ddply(f2, .(STATIONID), function(h){
-
-  #DECSLON <- as.numeric(getElement(h, "DECSLON"))
-
-  if(!is.na(h$DECELAT)){
-
-    if(h$DECELAT < 10){
-
-      h$DECELAT <- NA
-    }
-  }
-
-  if(!is.na(h$DECELON)){
-
-    if(h$DECELON > 0){
-      h$DECELON <- NA
-    }
-
-  }
-
-  return(h)
-}, .progress = "text", .inform = T)
-
-
-
 '%!in%' <- function(x,y)!('%in%'(x,y))
-result <- result[result$STATIONID %!in% fid, ]
-result <- rbind(result,f)
+#remove stations with incorrect DECELAT
+result <- result[result$STATIONID %!in% fid2, ]
+result <- rbind(result, f)
 
 write.csv(x = result, file = paste0(taxa[1], "_SEAMAP.csv"), row.names = F)
