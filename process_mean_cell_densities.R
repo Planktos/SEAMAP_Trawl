@@ -68,73 +68,105 @@ yr_cell_stats <- ddply(m, .variables = c("cell_id","year"), function(x){
   area_m2 <- unique(x$area_m2)
   decslat_cell_ctr <- unique(x$decslat_cell_ctr)
   decslon_cell_ctr <- unique(x$decslon_cell_ctr)
+  n_obs <- nrow(x)
 
-  if(nrow(x)>0){
+  if(n_obs>0){
 
     if(sum(x$biomass_den_kg_m3)>0){
 
-    bio_stat <- f_delta_stat(x = x$biomass_den_kg_m3)
-    bio_mean_kg <- bio_stat$mean
-    bio_var_kg <- bio_stat$variance
-    bio_sd_kg <- sqrt(bio_var_kg)
-    bio_CI95_kg <- bio_stat$CI95
+      cell_area_m2 <- unique(x$area_m2)
+      use_pop_den_no_m2 <- x$use_pop_den_no_m2
 
-    pop_stat <- f_delta_stat(x = x$pop_den_no_m3)
-    pop_mean_no_m3 <- pop_stat$mean
-    pop_var_no_m3 <- pop_stat$variance
-    pop_sd_no_m3 <- sqrt(pop_var_no_m3)
-    pop_CI95_no_m3 <- pop_stat$CI95
+      if(n_obs>1){
 
-    n_obs <- nrow(x)
+        bio_stat <- f_delta_stat(x = x$biomass_den_kg_m3)
+        bio_mean_kg <- bio_stat$mean
+        bio_var_kg <- bio_stat$variance
+        bio_sd_kg <- sqrt(bio_var_kg)
+        bio_CI95_kg <- bio_stat$CI95
 
-    cell_area_m2 <- unique(x$area_m2)
-    use_pop_den_no_m2 <- x$use_pop_den_no_m2
+        pop_stat <- f_delta_stat(x = x$pop_den_no_m3)
+        pop_mean_no_m3 <- pop_stat$mean
+        pop_var_no_m3 <- pop_stat$variance
+        pop_sd_no_m3 <- sqrt(pop_var_no_m3)
+        pop_CI95_no_m3 <- pop_stat$CI95
 
-    total_bio_wwt_kg_mean <- bio_mean_kg*cell_area_m2
-    total_bio_wwt_kg_var <- bio_var_kg*cell_area_m2
-    total_bio_wwt_kg_sd <- sqrt(total_bio_wwt_kg_var)
+        total_bio_wwt_kg_mean <- bio_mean_kg*cell_area_m2
+        total_bio_wwt_kg_var <- bio_var_kg*cell_area_m2
+        total_bio_wwt_kg_sd <- sqrt(total_bio_wwt_kg_var)
 
-    total_indiv_mean <- mean(use_pop_den_no_m2)*cell_area_m2
-    total_indiv_var <- var(use_pop_den_no_m2)*cell_area_m2
-    total_indiv_sd <- sqrt(total_indiv_var)
+        total_indiv_mean <- mean(use_pop_den_no_m2)*cell_area_m2
+        total_indiv_var <- var(use_pop_den_no_m2)*cell_area_m2
+        total_indiv_sd <- sqrt(total_indiv_var)
 
-    mean_depth_m <- mean(x$depth_m)
+        mean_depth_m <- mean(x$depth_m)
 
-    y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, mean_depth_m, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_sd_kg, bio_CI95_kg,
-                    total_bio_wwt_kg_mean, total_bio_wwt_kg_var, total_bio_wwt_kg_sd,
-                    pop_mean_no_m3, pop_var_no_m3, pop_sd_no_m3,pop_CI95_no_m3, total_indiv_mean, total_indiv_var,total_indiv_sd, n_obs)
+        y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, mean_depth_m, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_sd_kg, bio_CI95_kg,
+                        total_bio_wwt_kg_mean, total_bio_wwt_kg_var, total_bio_wwt_kg_sd,
+                        pop_mean_no_m3, pop_var_no_m3, pop_sd_no_m3,pop_CI95_no_m3, total_indiv_mean, total_indiv_var,total_indiv_sd, n_obs)
 
-    } else {
+      } else {
 
-    bio_mean_kg <- 0
-    bio_var_kg <- NA
-    bio_sd_kg <- NA
-    bio_CI95_kg <- NA
+        bio_stat <- f_delta_stat(x = x$biomass_den_kg_m3)
+        bio_mean_kg <- bio_stat$mean
+        bio_var_kg <- NA
+        bio_sd_kg <- NA
+        bio_CI95_kg <- NA
 
-    pop_mean_no_m3 <- 0
-    pop_var_no_m3 <- NA
-    pop_sd_no_m3 <- NA
-    pop_CI95_no_m3 <- NA
+        pop_stat <- f_delta_stat(x = x$pop_den_no_m3)
+        pop_mean_no_m3 <- pop_stat$mean
+        pop_var_no_m3 <- NA
+        pop_sd_no_m3 <- NA
+        pop_CI95_no_m3 <- NA
 
-    n_obs <- nrow(x)
+        n_obs <- nrow(x)
 
-    cell_area_m2 <- unique(x$area_m2)
+        total_bio_wwt_kg_mean <- bio_mean_kg*area_m2
+        total_bio_wwt_kg_var <- NA
+        total_bio_wwt_kg_sd <- NA
 
-    total_bio_wwt_kg_mean <- bio_mean_kg*area_m2
-    total_bio_wwt_kg_var <- NA
-    total_bio_wwt_kg_sd <- NA
+        total_indiv_mean <- mean(use_pop_den_no_m2)*cell_area_m2
+        total_indiv_var <- NA
+        total_indiv_sd <- NA
 
-    total_indiv_mean <- 0
-    total_indiv_var <- NA
-    total_indiv_sd <- NA
+        mean_depth_m <- mean(x$depth_m)
 
-    mean_depth_m <- mean(x$depth_m)
+        y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, mean_depth_m, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_sd_kg, bio_CI95_kg,
+                        total_bio_wwt_kg_mean, total_bio_wwt_kg_var, total_bio_wwt_kg_sd,
+                        pop_mean_no_m3, pop_var_no_m3, pop_sd_no_m3,pop_CI95_no_m3, total_indiv_mean, total_indiv_var,total_indiv_sd, n_obs)
+        }
 
-    y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, mean_depth_m, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_sd_kg, bio_CI95_kg,
-                    total_bio_wwt_kg_mean, total_bio_wwt_kg_var, total_bio_wwt_kg_sd,
-                    pop_mean_no_m3, pop_var_no_m3, pop_sd_no_m3,pop_CI95_no_m3, total_indiv_mean, total_indiv_var,total_indiv_sd, n_obs)
+      } else {
 
-    }
+      bio_mean_kg <- 0
+      bio_var_kg <- NA
+      bio_sd_kg <- NA
+      bio_CI95_kg <- NA
+
+      pop_mean_no_m3 <- 0
+      pop_var_no_m3 <- NA
+      pop_sd_no_m3 <- NA
+      pop_CI95_no_m3 <- NA
+
+      n_obs <- nrow(x)
+
+      cell_area_m2 <- unique(x$area_m2)
+
+      total_bio_wwt_kg_mean <- bio_mean_kg*area_m2
+      total_bio_wwt_kg_var <- NA
+      total_bio_wwt_kg_sd <- NA
+
+      total_indiv_mean <- 0
+      total_indiv_var <- NA
+      total_indiv_sd <- NA
+
+      mean_depth_m <- mean(x$depth_m)
+
+      y <- data.frame(cell_id, decslat_cell_ctr, decslon_cell_ctr, mean_depth_m, area_m2, year, agg_grp, bio_mean_kg, bio_var_kg, bio_sd_kg, bio_CI95_kg,
+                      total_bio_wwt_kg_mean, total_bio_wwt_kg_var, total_bio_wwt_kg_sd,
+                      pop_mean_no_m3, pop_var_no_m3, pop_sd_no_m3,pop_CI95_no_m3, total_indiv_mean, total_indiv_var,total_indiv_sd, n_obs)
+
+      }
 
   }
 
@@ -162,6 +194,7 @@ yr_cell_stats$agg_grp <- as.character(yr_cell_stats$agg_grp)
 
 #calculate annual mean biomass & population density | STEP 2 in JMP workflow | STEP 3 in JMP workflow
 
+
 # Whole Gulf of Mexico time-series ------
 yr_stats <- ddply(yr_cell_stats, .variables = c("year"), function(x){
 
@@ -169,6 +202,18 @@ yr_stats <- ddply(yr_cell_stats, .variables = c("year"), function(x){
   agg_grp <- unique(x$agg_grp)
 
   n_cells <- length(unique(x$cell_id))
+
+  weighted.var <- function(x, w, na.rm = FALSE) {
+    if (na.rm) {
+      w <- w[i <- !is.na(x)]
+      x <- x[i]
+    }
+    sum.w <- sum(w)
+    sum.w2 <- sum(w^2)
+    mean.w <- sum(x * w) / sum(w)
+    (sum.w / (sum.w^2 - sum.w2)) * sum(w * (x - mean.w)^2, na.rm =
+                                         na.rm)
+  }
 
  if(n_cells>0){
 
@@ -178,33 +223,22 @@ yr_stats <- ddply(yr_cell_stats, .variables = c("year"), function(x){
 
       bio_stat <- f_delta_stat(x = x$total_bio_wwt_kg_mean)
       bio_delta_mean_kg <- bio_stat$mean
-      bio_delta_var_kg <- sum(x$total_bio_wwt_kg_var, na.rm = T)
+      bio_delta_var_kg <- bio_stat$variance
       bio_delta_sd_kg <- sqrt(bio_delta_var_kg)
-
-      bio_wt_mean_kg <- wtd.mean(x = x$total_bio_wwt_kg_mean, weights = x$n_obs)
-      bio_wt_var_kg <- wtd.var(x = x$total_bio_wwt_kg_mean, weights = x$n_obs)
-      bio_wt_sd_kg <- sqrt(bio_wt_var_kg)
 
       pop_stat <- f_delta_stat(x = x$pop_mean_no_m3)
       pop_delta_mean_no_m3 <- pop_stat$mean
-      pop_delta_var_no_m3 <- sum(x$pop_var_no_m3, na.rm = T)
+      pop_delta_var_no_m3 <- pop_stat$variance
       pop_delta_sd_no_m3 <- sqrt(pop_delta_var_no_m3)
 
-      pop_wt_mean_no_m3 <- wtd.mean(x = x$pop_mean_no_m3, weights = x$n_obs)
-      pop_wt_var_no_m3 <- wtd.var(x = x$pop_mean_no_m3, weights = x$n_obs)
-      pop_wt_sd_no_m3 <- sqrt(bio_wt_var_kg)
-
-      total_indiv_mean <- mean(x$total_indiv_mean)
-      total_indiv_var <- sum(x$total_indiv_var)
+      total_stat <- f_delta_stat(x = x$x$total_indiv_mean)
+      total_indiv_mean <- total_stat$mean
+      total_indiv_var <- total_stat$variance
       total_indiv_sd <- sqrt(x$total_indiv_var)
 
-      total_indiv_wt_mean <- wtd.mean(x = x$total_indiv_mean, weights = x$n_obs)
-      total_indiv_wt_var <- wtd.var(x = x$total_indiv_mean, weights = x$n_obs)
-      total_indiv_wt_sd <- sqrt(total_indiv_wt_var)
-
-      y <- data.frame(year, n_cells, n_stns, agg_grp, bio_wt_mean_kg, bio_wt_var_kg, bio_wt_sd_kg, bio_delta_mean_kg, bio_delta_var_kg, bio_delta_sd_kg,
-                      pop_wt_mean_no_m3, pop_wt_var_no_m3, pop_wt_sd_no_m3, pop_delta_mean_no_m3, pop_delta_var_no_m3, pop_delta_sd_no_m3, total_indiv_mean,
-                      total_indiv_var, total_indiv_sd, total_indiv_wt_mean, total_indiv_wt_var, total_indiv_wt_sd)
+      y <- data.frame(year, n_cells, n_stns, agg_grp, bio_delta_mean_kg, bio_delta_var_kg, bio_delta_sd_kg,
+                      pop_delta_mean_no_m3, pop_delta_var_no_m3, pop_delta_sd_no_m3, total_indiv_mean,
+                      total_indiv_var, total_indiv_sd)
 
     } else {
 
@@ -214,29 +248,17 @@ yr_stats <- ddply(yr_cell_stats, .variables = c("year"), function(x){
       bio_delta_var_kg <-0
       bio_delta_sd_kg <- sqrt(bio_delta_var_kg)
 
-      bio_wt_mean_kg <- 0
-      bio_wt_var_kg <- NA
-      bio_wt_sd_kg <- NA
-
       pop_delta_mean_no_m3 <- 0
       pop_delta_var_no_m3 <-  NA
       pop_delta_sd_no_m3 <- sqrt(pop_delta_var_no_m3)
-
-      pop_wt_mean_no_m3 <- 0
-      pop_wt_var_no_m3 <- NA
-      pop_wt_sd_no_m3 <- NA
 
       total_indiv_mean <- 0
       total_indiv_var <- NA
       total_indiv_sd <- NA
 
-      total_indiv_wt_mean <- 0
-      total_indiv_wt_var <- NA
-      total_indiv_wt_sd <- NA
-
-      y <- data.frame(year, n_cells, n_stns, agg_grp, bio_wt_mean_kg, bio_wt_var_kg, bio_wt_sd_kg, bio_delta_mean_kg, bio_delta_var_kg, bio_delta_sd_kg,
-                      pop_wt_mean_no_m3, pop_wt_var_no_m3, pop_wt_sd_no_m3, pop_delta_mean_no_m3, pop_delta_var_no_m3, pop_delta_sd_no_m3, total_indiv_mean,
-                      total_indiv_var, total_indiv_sd, total_indiv_wt_mean, total_indiv_wt_var, total_indiv_wt_sd)
+      y <- data.frame(year, n_cells, n_stns, agg_grp, bio_delta_mean_kg, bio_delta_var_kg, bio_delta_sd_kg,
+                      pop_delta_mean_no_m3, pop_delta_var_no_m3, pop_delta_sd_no_m3, total_indiv_mean,
+                      total_indiv_var, total_indiv_sd)
     }
 
   }
