@@ -5,7 +5,6 @@ library(ggThemeAssist)
 library(data.table)
 library(plyr)
 library(gtable)
-library(ggpubr)
 
 # geom_ribbon -------------------------------------------------------------
 #brainstorms
@@ -87,16 +86,14 @@ wgp = ggplot(subset(yr_stats, yr_stats$year >= 1984), aes(x= year, y= pop_delta_
   geom_line(aes(colour="Whole Gulf")) +
   theme_classic() +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
-  scale_y_continuous(breaks = c(0,2,4,6,8,10)) +
+  scale_y_continuous(breaks = c(0,2,4,6,8,10,12)) +
   scale_x_continuous(breaks = seq(1984,2018,2)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
   scale_color_manual(values=c("black")) +
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
-        axis.ticks.x=element_blank())
-
-
+        axis.ticks.x=element_blank()) + theme(axis.line.x = element_line(colour = "white"))
 plot(wgp)
 
 #Diff_by_state time series
@@ -120,7 +117,7 @@ plot(stpl)
 
 #combine ggplots
 figure1 = ggarrange(wgp, stpl,
-                    ncol = 1, nrow = 2)
+                    ncol = 1, nrow = 2, align = "none", heights = c(1,2))
 plot(figure1)
 
 
@@ -129,6 +126,7 @@ plot(figure1)
 
 # FL plots ----------------------------------------------------------------
 
+#FL inshore
 flin =
   ggplot(subset(fl.insh, fl.insh$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, colour="Inshore", fl.insh, fl.insh$year >= 1984)) +
   geom_point(na.rm = TRUE) +
@@ -139,12 +137,11 @@ flin =
   scale_x_continuous(breaks = seq(1984,2018,2)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5))
-
 plot(flin)
 
 
 
-
+#FL shelf
 dhself = fl.shelf$subregion_depth = factor(fl.shelf$subregion_depth, levels = c("2_shelf"))
 fl.shelf$pop_delta_mean_no_m3 = ifelse(fl.shelf$year == 1985, NA, fl.shelf$pop_delta_mean_no_m3)
 flsh = ggplot(subset(fl.shelf, fl.shelf$year >= 1984), aes(x= year, y= pop_delta_mean_no_m3)) +
@@ -157,9 +154,24 @@ flsh = ggplot(subset(fl.shelf, fl.shelf$year >= 1984), aes(x= year, y= pop_delta
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
   scale_color_manual(values=c("black"))
-
 plot(flsh)
 
 
+#comparing FL inshore and shelf
+flcp <- ggplot() +
+  # flin
+  geom_point(data=subset(fl.insh, fl.insh$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Inshore")) +
+  geom_line(data=subset(fl.insh, fl.insh$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Inshore")) +
+  # flsh
+  geom_point(data=subset(fl.shelf, fl.shelf$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Shelf")) +
+  geom_line(data=subset(fl.shelf, fl.shelf$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Shelf")) +
+  theme_classic() +
+  scale_y_continuous(breaks = c(0,2,4,6,8,10,12,14)) +
+  scale_x_continuous(breaks = seq(1984,2018,2)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
+  scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4"))
+plot(flcp)
 
 
