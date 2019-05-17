@@ -4,6 +4,8 @@ library (tidyverse)
 library(ggThemeAssist)
 library(data.table)
 library(plyr)
+library(gtable)
+library(ggpubr)
 
 # geom_ribbon -------------------------------------------------------------
 #brainstorms
@@ -79,14 +81,22 @@ plot(txp)
 
 # time_series -------------------------------------------------------------
 #WHOLE GULF TIME SERIES
-wgp = ggplot(yr_stats, aes(x= year, y= pop_delta_mean_no_m3)) +
-  geom_point() +
-  geom_line() +
+yr_stats$pop_delta_mean_no_m3 = ifelse(yr_stats$year == 1985, NA, yr_stats$pop_delta_mean_no_m3)
+wgp = ggplot(subset(yr_stats, yr_stats$year >= 1984), aes(x= year, y= pop_delta_mean_no_m3)) +
+  geom_point(aes(colour="Whole Gulf")) +
+  geom_line(aes(colour="Whole Gulf")) +
   theme_classic() +
-  labs(x= "Year", y=expression(paste("Density ", (kg/m^3)))) +
-  #geom_ribbon(aes(ymin=yr_stats$pop_delta_mean_no_m3-yr_stats$pop_delta_sd_no_m3, ymax=yr_stats$pop_delta_mean_no_m3+yr_stats$pop_delta_sd_no_m3))
+  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
   scale_y_continuous(breaks = c(0,2,4,6,8,10)) +
-  scale_x_continuous(breaks = seq(1984,2018,2))
+  scale_x_continuous(breaks = seq(1984,2018,2)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  scale_color_manual(values=c("black")) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+
+
 plot(wgp)
 
 #Diff_by_state time series
@@ -99,18 +109,56 @@ stpl = ggplot(subset(states, states$year >=1984), aes(x= year, y = pop_delta_mea
   theme_classic() +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
   facet_grid(rows = vars(subregion_alongshore)) +
-  #geom_ribbon(aes(ymin=yr_stats$pop_delta_mean_no_m3-yr_stats$pop_delta_sd_no_m3, ymax=yr_stats$pop_delta_mean_no_m3+yr_stats$pop_delta_sd_no_m3))
   scale_y_continuous(breaks = c(0,2,4,6,8,10,12,14)) +
   scale_x_continuous(breaks = seq(1984,2018,2)) +
   theme(axis.text.x = element_text(angle = 45)) +
-  theme(axis.text.x = element_text(vjust = 0.5))
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  theme(strip.background = element_blank(),strip.text.y = element_blank()) +
+  scale_color_manual(breaks = c("1_Tex", "2_Lou", "3_Fla"), values=c("firebrick", "chocolate1", "blue"))
 plot(stpl)
 
 
+#combine ggplots
+figure1 = ggarrange(wgp, stpl,
+                    ncol = 1, nrow = 2)
+plot(figure1)
 
 
 
 
+
+# FL plots ----------------------------------------------------------------
+
+flin =
+  ggplot(subset(fl.insh, fl.insh$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, colour="Inshore", fl.insh, fl.insh$year >= 1984)) +
+  geom_point(na.rm = TRUE) +
+  geom_line(na.rm = TRUE) +
+  theme_classic() +
+  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
+  scale_y_continuous(breaks = c(0,2,4,6,8,10)) +
+  scale_x_continuous(breaks = seq(1984,2018,2)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5))
+
+plot(flin)
+
+
+
+
+dhself = fl.shelf$subregion_depth = factor(fl.shelf$subregion_depth, levels = c("2_shelf"))
+fl.shelf$pop_delta_mean_no_m3 = ifelse(fl.shelf$year == 1985, NA, fl.shelf$pop_delta_mean_no_m3)
+flsh = ggplot(subset(fl.shelf, fl.shelf$year >= 1984), aes(x= year, y= pop_delta_mean_no_m3)) +
+  geom_point(aes(colour="Shelf")) +
+  geom_line(aes(colour="Shelf")) +
+  theme_classic() +
+  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
+  scale_y_continuous(breaks = c(0,2,4,6,8,10)) +
+  scale_x_continuous(breaks = seq(1984,2018,2)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  scale_color_manual(values=c("black"))
+
+plot(flsh)
 
 
 
