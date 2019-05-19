@@ -81,7 +81,7 @@ plot(txp)
 # time_series -------------------------------------------------------------
 #WHOLE GULF TIME SERIES
 yr_stats$pop_delta_mean_no_m3 = ifelse(yr_stats$year == 1985, NA, yr_stats$pop_delta_mean_no_m3)
-wgp = ggplot(subset(yr_stats, yr_stats$year >= 1984), aes(x= year, y= pop_delta_mean_no_m3)) +
+wgp = ggplot(subset(yr_states, yr_stats$year >= 1984), aes(x= year, y= pop_delta_mean_no_m3)) +
   geom_point(aes(colour="Whole Gulf")) +
   geom_line(aes(colour="Whole Gulf")) +
   theme_classic() +
@@ -115,10 +115,36 @@ stpl = ggplot(subset(states, states$year >=1984), aes(x= year, y = pop_delta_mea
 plot(stpl)
 
 
-#combine ggplots
-figure1 = ggarrange(wgp, stpl,
-                    ncol = 1, nrow = 2, align = "none", heights = c(1,2))
-plot(figure1)
+#facet fix
+  #establish wgp dataframe
+year <- c(yr_stats$year)
+subregion_alongshore <- c("Whole Gulf")
+pop_delta_mean_no_m3 <- c(yr_stats$pop_delta_mean_no_m3)
+df <-  data.frame(year, subregion_alongshore, pop_delta_mean_no_m3)
+  #establish stpl dataframe
+states = rbind(fl, la, tx)
+states$pop_delta_mean_no_m3 = ifelse(states$year == 1985, NA, states$pop_delta_mean_no_m3)
+states$subregion_alongshore = factor(states$subregion_alongshore, levels = c("1_Tex", "2_Lou", "3_Fla"))
+gulfts <- ggplot() +
+  # wgp
+  geom_point(data=subset(df, df$year >= 1984), aes(x= year, y= pop_delta_mean_no_m3, colour=subregion_alongshore), na.rm=TRUE) +
+  geom_line(data=subset(df, df$year >= 1984), aes(x= year, y= pop_delta_mean_no_m3, colour=subregion_alongshore), na.rm=TRUE) +
+  # stpl
+  geom_point(data=subset(states, states$year >=1984), aes(x= year, y = pop_delta_mean_no_m3, colour=subregion_alongshore), na.rm=TRUE) +
+  geom_line(data=subset(states, states$year >=1984), aes(x= year, y = pop_delta_mean_no_m3, colour=subregion_alongshore), na.rm=TRUE) +
+  theme_classic() +
+  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
+  scale_y_continuous(breaks = c(0,2,4,6,8,10,12,14)) +
+  scale_x_continuous(breaks = seq(1984,2018,2)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  theme(strip.background = element_blank(),strip.text.y = element_blank()) +
+  scale_color_manual(breaks = c("1_Tex", "2_Lou", "3_Fla", "Whole Gulf"), values=c("firebrick", "chocolate1", "blue", "black")) +
+  #facet
+  facet_grid(rows=vars(subregion_alongshore)) +
+  ggtitle("Aurelia in the Gulf of Mexico") + theme(plot.title = element_text(hjust = 0.65,
+    vjust = 1.2))
+plot(gulfts)
 
 
 
