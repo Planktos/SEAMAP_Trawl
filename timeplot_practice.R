@@ -1,3 +1,6 @@
+#AUTHOR : Aidyn Creson
+#DATE: May 2019
+
 #create time plot for whole gulf
 library(ggplot2)
 library (tidyverse)
@@ -81,7 +84,7 @@ plot(txp)
 # time_series -------------------------------------------------------------
 #WHOLE GULF TIME SERIES
 yr_stats$pop_delta_mean_no_m3 = ifelse(yr_stats$year == 1985, NA, yr_stats$pop_delta_mean_no_m3)
-wgp = ggplot(subset(yr_states, yr_stats$year >= 1984), aes(x= year, y= pop_delta_mean_no_m3)) +
+wgp = ggplot(subset(yr_stats, yr_stats$year >= 1984), aes(x= year, y= pop_delta_mean_no_m3)) +
   geom_point(aes(colour="Whole Gulf")) +
   geom_line(aes(colour="Whole Gulf")) +
   theme_classic() +
@@ -90,10 +93,7 @@ wgp = ggplot(subset(yr_states, yr_stats$year >= 1984), aes(x= year, y= pop_delta
   scale_x_continuous(breaks = seq(1984,2018,2)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
-  scale_color_manual(values=c("black")) +
-  theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank()) + theme(axis.line.x = element_line(colour = "white"))
+  scale_color_manual(values=c("black"))
 plot(wgp)
 
 #Diff_by_state time series
@@ -148,8 +148,6 @@ plot(gulfts)
 
 
 
-
-
 # FL plots ----------------------------------------------------------------
 
 #FL inshore
@@ -199,5 +197,3 @@ flcp <- ggplot() +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
   scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4"))
 plot(flcp)
-
-
