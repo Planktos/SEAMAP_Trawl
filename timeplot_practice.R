@@ -1,5 +1,5 @@
 #AUTHOR : Aidyn Creson
-#DATE: May 2019
+#DATE: April 26, 2019
 
 #create time plot for whole gulf
 library(ggplot2)
@@ -151,6 +151,7 @@ plot(gulfts)
 # FL plots ----------------------------------------------------------------
 
 #FL inshore
+fl.insh$pop_delta_mean_no_m3 = ifelse(fl.insh$year == 1985, NA, fl.insh$pop_delta_mean_no_m3)
 flin =
   ggplot(subset(fl.insh, fl.insh$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, colour="Inshore", fl.insh, fl.insh$year >= 1984)) +
   geom_point(na.rm = TRUE) +
@@ -166,6 +167,7 @@ plot(flin)
 
 
 #FL shelf
+fl.shelf$pop_delta_mean_no_m3 = ifelse(fl.shelf$year == 1985, NA, fl.shelf$pop_delta_mean_no_m3)
 dhself = fl.shelf$subregion_depth = factor(fl.shelf$subregion_depth, levels = c("2_shelf"))
 fl.shelf$pop_delta_mean_no_m3 = ifelse(fl.shelf$year == 1985, NA, fl.shelf$pop_delta_mean_no_m3)
 flsh = ggplot(subset(fl.shelf, fl.shelf$year >= 1984), aes(x= year, y= pop_delta_mean_no_m3)) +
@@ -182,6 +184,8 @@ plot(flsh)
 
 
 #comparing FL inshore and shelf
+fl.shelf$pop_delta_mean_no_m3 = ifelse(fl.shelf$year == 1985, NA, fl.shelf$pop_delta_mean_no_m3)
+fl.insh$pop_delta_mean_no_m3 = ifelse(fl.insh$year == 1985, NA, fl.insh$pop_delta_mean_no_m3)
 flcp <- ggplot() +
   # flin
   geom_point(data=subset(fl.insh, fl.insh$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Inshore")) +
