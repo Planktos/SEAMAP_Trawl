@@ -27,7 +27,7 @@ NameTrans = read_xlsx(path = 'NameTranslator_table201305.xlsx')
 #View(NameTrans)
 
 major.grp = "jellyfish"
-taxa = c("AURELIA","AURELIA AURITA")
+taxa = c("CHRYSAORA","CHRYSAORA QUINQUECIRRHA","DACTYLOMETRA QUINQUECIRRHA")
 
 # load SEAMAP data files "https://seamap.gsmfc.org/datarequests/index.php" -----
 INGEST_DATA = read.csv('20190329_SEAMAP_csv/INGEST_DATA.csv')
@@ -595,5 +595,7 @@ fid2 <- f2$STATIONID
 #remove stations with incorrect DECELAT
 result <- result[result$STATIONID %!in% fid2, ]
 result <- rbind(result, f)
+
+result$taxa <- taxa[1]
 
 write.csv(x = result, file = paste0(taxa[1], "_SEAMAP.csv"), row.names = F)
