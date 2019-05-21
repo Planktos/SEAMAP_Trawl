@@ -1,5 +1,5 @@
 #AUTHOR : Aidyn Creson
-#DATE: April 26, 2019
+#DATE:  26 April 2019
 
 #create time plot for whole gulf
 library(ggplot2)
@@ -139,7 +139,7 @@ gulfts <- ggplot() +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
   theme(strip.background = element_blank(),strip.text.y = element_blank()) +
-  scale_color_manual(breaks = c("1_Tex", "2_Lou", "3_Fla", "Whole Gulf"), values=c("firebrick", "chocolate1", "blue", "black")) +
+  scale_color_manual(breaks = c("Whole Gulf", "1_Tex", "2_Lou", "3_Fla"), values=c("firebrick", "chocolate1", "blue", "black")) +
   #facet
   facet_grid(rows=vars(subregion_alongshore)) +
   ggtitle("Aurelia in the Gulf of Mexico") + theme(plot.title = element_text(hjust = 0.65,
@@ -171,8 +171,8 @@ fl.shelf$pop_delta_mean_no_m3 = ifelse(fl.shelf$year == 1985, NA, fl.shelf$pop_d
 dhself = fl.shelf$subregion_depth = factor(fl.shelf$subregion_depth, levels = c("2_shelf"))
 fl.shelf$pop_delta_mean_no_m3 = ifelse(fl.shelf$year == 1985, NA, fl.shelf$pop_delta_mean_no_m3)
 flsh = ggplot(subset(fl.shelf, fl.shelf$year >= 1984), aes(x= year, y= pop_delta_mean_no_m3)) +
-  geom_point(aes(colour="Shelf")) +
-  geom_line(aes(colour="Shelf")) +
+  geom_point(aes(colour="Shelf"), na.rm=TRUE) +
+  geom_line(aes(colour="Shelf"), na.rm=TRUE) +
   theme_classic() +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
   scale_y_continuous(breaks = c(0,2,4,6,8,10)) +
