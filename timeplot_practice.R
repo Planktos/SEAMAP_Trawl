@@ -72,15 +72,6 @@ txp = ggplot(tx, aes(x= year, y= pop_delta_mean_no_m3)) +
   scale_x_continuous(breaks = c(1985,1990,1995,2000,2005,2010,2015))
 plot(txp)
 
-
-
-
-
-
-
-
-
-
 # time_series -------------------------------------------------------------
 #WHOLE GULF TIME SERIES
 yr_stats$pop_delta_mean_no_m3 = ifelse(yr_stats$year == 1985, NA, yr_stats$pop_delta_mean_no_m3)
@@ -145,7 +136,6 @@ gulfts <- ggplot() +
   ggtitle("Aurelia in the Gulf of Mexico") + theme(plot.title = element_text(hjust = 0.65,
     vjust = 1.2))
 plot(gulfts)
-
 
 
 # FL plots ----------------------------------------------------------------
