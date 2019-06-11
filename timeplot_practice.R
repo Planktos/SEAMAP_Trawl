@@ -144,11 +144,11 @@ fl.shelf$pop_delta_mean_no_m3 = ifelse(fl.shelf$year == 1985, NA, fl.shelf$pop_d
 fl.insh$pop_delta_mean_no_m3 = ifelse(fl.insh$year == 1985, NA, fl.insh$pop_delta_mean_no_m3)
 flcp <- ggplot() +
   # flin
-  geom_point(data=subset(fl.insh, fl.insh$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Inshore")) +
-  geom_line(data=subset(fl.insh, fl.insh$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Inshore")) +
+  geom_point(data=subset(fl.insh, fl.insh$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
+  geom_line(data=subset(fl.insh, fl.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
   # flsh
-  geom_point(data=subset(fl.shelf, fl.shelf$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Shelf")) +
-  geom_line(data=subset(fl.shelf, fl.shelf$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Shelf")) +
+  geom_point(data=subset(fl.shelf, fl.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
+  geom_line(data=subset(fl.shelf, fl.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   theme_classic() +
   scale_y_continuous(breaks = c(0,2,4,6,8,10,12,14)) +
   scale_x_continuous(breaks = seq(1984,2018,2)) +
@@ -156,7 +156,11 @@ flcp <- ggplot() +
   theme(axis.text.x = element_text(vjust = 0.5)) +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
   scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4"))
+file = "AURELIA_FL.png"
+png(file=file, width=12,height=9,units="in", res=225)
 plot(flcp)
+dev.off()
+
 
 # AURELIA LA plots --------------------------------------------------------
 #comparing LA inshore and shelf
@@ -164,11 +168,11 @@ la.shelf$pop_delta_mean_no_m3 = ifelse(la.shelf$year == 1985, NA, la.shelf$pop_d
 la.insh$pop_delta_mean_no_m3 = ifelse(la.insh$year == 1985, NA, la.insh$pop_delta_mean_no_m3)
 lacp <- ggplot() +
   # flin
-  geom_point(data=subset(la.insh, fl.insh$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Inshore")) +
-  geom_line(data=subset(la.insh, fl.insh$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Inshore")) +
+  geom_point(data=subset(la.insh, la.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
+  geom_line(data=subset(la.insh, la.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
   # flsh
-  geom_point(data=subset(la.shelf, fl.shelf$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Shelf")) +
-  geom_line(data=subset(la.shelf, fl.shelf$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Shelf")) +
+  geom_point(data=subset(la.shelf, la.shelf$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
+  geom_line(data=subset(la.shelf, la.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   theme_classic() +
   scale_y_continuous(breaks = c(0,2,4,6,8,10,12,14,16,18,20,22,24,26,28)) +
   scale_x_continuous(breaks = seq(1984,2018,2)) +
@@ -176,9 +180,10 @@ lacp <- ggplot() +
   theme(axis.text.x = element_text(vjust = 0.5)) +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
   scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4"))
+file = "AURELIA_LA.png"
+png(file=file, width=12,height=9,units="in", res=225)
 plot(lacp)
-
-
+dev.off()
 
 
 
@@ -189,11 +194,11 @@ tx.shelf$pop_delta_mean_no_m3 = ifelse(tx.shelf$year == 1985, NA, tx.shelf$pop_d
 tx.insh$pop_delta_mean_no_m3 = ifelse(tx.insh$year == 1985, NA, tx.insh$pop_delta_mean_no_m3)
 txcp <- ggplot() +
   # flin
-  geom_point(data=subset(tx.insh, tx.insh$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Inshore")) +
-  geom_line(data=subset(tx.insh, tx.insh$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Inshore")) +
+  geom_point(data=subset(tx.insh, tx.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
+  geom_line(data=subset(tx.insh, tx.insh$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
   # flsh
-  geom_point(data=subset(tx.shelf, tx.shelf$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Shelf")) +
-  geom_line(data=subset(tx.shelf, tx.shelf$year >=1984), aes(x=year, y=pop_delta_mean_no_m3, na.rm=TRUE,colour="Shelf")) +
+  geom_point(data=subset(tx.shelf, tx.shelf$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
+  geom_line(data=subset(tx.shelf, tx.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   theme_classic() +
   scale_y_continuous(breaks = c(0,2,4,6,8,10,12,14,16,18,20,22,24,26,28)) +
   scale_x_continuous(breaks = seq(1984,2018,2)) +
@@ -201,5 +206,18 @@ txcp <- ggplot() +
   theme(axis.text.x = element_text(vjust = 0.5)) +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
   scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4"))
+file = "AURELIA_TX.png"
+png(file=file, width=12,height=9,units="in", res=225)
 plot(txcp)
+dev.off()
+
+
+
+
+
+
+
+
+
+
 

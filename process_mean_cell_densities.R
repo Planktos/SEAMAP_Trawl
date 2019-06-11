@@ -402,7 +402,7 @@ save(yr_shore_stats, file = "Aurelia_SEAMAP_GoM_region_time-series.Rdata")
   }, .progress = "text", .inform = T)
 
   # TX - INSHORE
-  tx.insh <- yr_shore_depth_stats[yr_shore_depth_stats$subregion_depth == "1_inshore" & yr_shore_depth_stats$subregion_alongshore == "2_Lou",]
+  tx.insh <- yr_shore_depth_stats[yr_shore_depth_stats$subregion_depth == "1_inshore" & yr_shore_depth_stats$subregion_alongshore == "1_Tex",]
 
   p <- plot(x=tx.insh$year, y=log(tx.insh$pop_wt_mean_no_m3+1), type = "b")
   p <- plot(x=tx.insh$year, y=tx.insh$n_obs, type = "b")
@@ -411,7 +411,7 @@ save(yr_shore_stats, file = "Aurelia_SEAMAP_GoM_region_time-series.Rdata")
   summary(model.tx.insh) #Not Significant change over time
 
   # TX - SHELF
-  tx.shelf <- yr_depth_stats[yr_shore_depth_stats$subregion_depth == "2_shelf" & yr_shore_depth_stats$subregion_alongshore == "1_Tex",]
+  tx.shelf <- yr_shore_depth_stats[yr_shore_depth_stats$subregion_depth == "2_shelf" & yr_shore_depth_stats$subregion_alongshore == "1_Tex",]
 
   p <- plot(x=tx.shelf$year, y=log(tx.shelf$pop_wt_mean_no_m3+1), type = "b")
   p <- plot(x=tx.shelf$year, y=tx.shelf$n_obs, type = "b")
@@ -431,7 +431,7 @@ save(yr_shore_stats, file = "Aurelia_SEAMAP_GoM_region_time-series.Rdata")
   summary(model.la.insh) #Not Significant change over time
 
   # LA - SHELF
-  la.shelf <- yr_depth_stats[yr_shore_depth_stats$subregion_depth == "2_shelf" & yr_shore_depth_stats$subregion_alongshore == "2_Lou",]
+  la.shelf <- yr_shore_depth_stats[yr_shore_depth_stats$subregion_depth == "2_shelf" & yr_shore_depth_stats$subregion_alongshore == "2_Lou",]
 
   p <- plot(x=la.shelf$year, y=log(la.shelf$pop_wt_mean_no_m3+1), type = "b")
   p <- plot(x=la.shelf$year, y=la.shelf$n_obs, type = "b")
@@ -451,7 +451,7 @@ save(yr_shore_stats, file = "Aurelia_SEAMAP_GoM_region_time-series.Rdata")
   summary(model.fl.insh) # Significant change over time, p = 0.00585
 
   # L - SHELF
-  fl.shelf <- yr_depth_stats[yr_shore_depth_stats$subregion_depth == "2_shelf" & yr_shore_depth_stats$subregion_alongshore == "3_Fla",]
+  fl.shelf <- yr_shore_depth_stats[yr_shore_depth_stats$subregion_depth == "2_shelf" & yr_shore_depth_stats$subregion_alongshore == "3_Fla",]
 
   p <- plot(x=fl.shelf$year, y=log(fl.shelf$pop_wt_mean_no_m3+1), type = "b")
   p <- plot(x=fl.shelf$year, y=fl.shelf$n_obs, type = "b")
