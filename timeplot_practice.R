@@ -150,11 +150,11 @@ flcp <- ggplot() +
   geom_point(data=subset(fl.shelf, fl.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   geom_line(data=subset(fl.shelf, fl.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   theme_classic() +
-  scale_y_continuous(breaks = c(0,2,4,6,8,10,12,14)) +
+  scale_y_continuous(breaks = seq(0,4,2), limits = c(0,4)) +
   scale_x_continuous(breaks = seq(1984,2018,2)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
-  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
+  labs(x= "Year", y=expression(paste(" logTaxa Density ", (kg/m^3)))) +
   scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4"))
 file = "AURELIA_FL.png"
 png(file=file, width=12,height=9,units="in", res=225)
@@ -174,11 +174,11 @@ lacp <- ggplot() +
   geom_point(data=subset(la.shelf, la.shelf$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   geom_line(data=subset(la.shelf, la.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   theme_classic() +
-  scale_y_continuous(breaks = c(0,2,4,6,8,10,12,14,16,18,20,22,24,26,28)) +
+  scale_y_continuous(breaks = c(0,4,2), limits = c(0,4)) +
   scale_x_continuous(breaks = seq(1984,2018,2)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
-  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
+  labs(x= "Year", y=expression(paste(" logTaxa Density ", (kg/m^3)))) +
   scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4"))
 file = "AURELIA_LA.png"
 png(file=file, width=12,height=9,units="in", res=225)
@@ -200,11 +200,11 @@ txcp <- ggplot() +
   geom_point(data=subset(tx.shelf, tx.shelf$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   geom_line(data=subset(tx.shelf, tx.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   theme_classic() +
-  scale_y_continuous(breaks = c(0,2,4,6,8,10,12,14,16,18,20,22,24,26,28)) +
+  scale_y_continuous(breaks = c(0,4,2), limits = c(0,4)) +
   scale_x_continuous(breaks = seq(1984,2018,2)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
-  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
+  labs(x= "Year", y=expression(paste(" logTaxa Density ", (kg/m^3)))) +
   scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4"))
 file = "AURELIA_TX.png"
 png(file=file, width=12,height=9,units="in", res=225)
