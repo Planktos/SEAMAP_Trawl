@@ -75,16 +75,18 @@ plot(txp)
 # AURELIA time_series -------------------------------------------------------------
 #WHOLE GULF TIME SERIES
 yr_stats$pop_delta_mean_no_m3 = ifelse(yr_stats$year == 1985, NA, yr_stats$pop_delta_mean_no_m3)
-wgp = ggplot(subset(yr_stats, yr_stats$year >= 1984), aes(x= year, y= pop_delta_mean_no_m3)) +
+wgp <- ggplot(subset(yr_stats, yr_stats$year >= 1984), aes(x= year, y= log(pop_delta_mean_no_m3+1))) +
   geom_point(aes(colour="Whole Gulf")) +
   geom_line(aes(colour="Whole Gulf")) +
   theme_classic() +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
-  scale_y_continuous(breaks = c(0,2,4,6,8,10,12)) +
-  scale_x_continuous(breaks = seq(1984,2018,2)) +
+  scale_y_continuous(breaks = seq(0,4,0.5)) +
+  scale_x_continuous(breaks = seq(1984,2018,1)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
-  scale_color_manual(values=c("black"))
+  scale_color_manual(values=c("black")) +
+  ggtitle("Aurelia_WholeGulf_1984-2018") +
+  theme(plot.title = element_text(size = 16, hjust = 0.5))
 plot(wgp)
 
 #Diff_by_state time series
@@ -150,12 +152,15 @@ flcp <- ggplot() +
   geom_point(data=subset(fl.shelf, fl.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   geom_line(data=subset(fl.shelf, fl.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   theme_classic() +
-  scale_y_continuous(breaks = seq(0,4,2), limits = c(0,4)) +
-  scale_x_continuous(breaks = seq(1984,2018,2)) +
+  scale_y_continuous(breaks = seq(0,4,0.5), limits = c(0,4)) +
+  scale_x_continuous(breaks = seq(1984,2018,1)) +
+  ggtitle("Aurelia_Florida_1984-2018") +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
   labs(x= "Year", y=expression(paste(" logTaxa Density ", (kg/m^3)))) +
-  scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4"))
+  scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.title = element_text(size = 16))
 file = "AURELIA_FL.png"
 png(file=file, width=12,height=9,units="in", res=225)
 plot(flcp)
@@ -167,19 +172,22 @@ dev.off()
 la.shelf$pop_delta_mean_no_m3 = ifelse(la.shelf$year == 1985, NA, la.shelf$pop_delta_mean_no_m3)
 la.insh$pop_delta_mean_no_m3 = ifelse(la.insh$year == 1985, NA, la.insh$pop_delta_mean_no_m3)
 lacp <- ggplot() +
-  # flin
+  # lain
   geom_point(data=subset(la.insh, la.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
   geom_line(data=subset(la.insh, la.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
-  # flsh
+  # lash
   geom_point(data=subset(la.shelf, la.shelf$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   geom_line(data=subset(la.shelf, la.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   theme_classic() +
-  scale_y_continuous(breaks = c(0,4,2), limits = c(0,4)) +
-  scale_x_continuous(breaks = seq(1984,2018,2)) +
+  scale_y_continuous(breaks = seq(0,4,0.5), limits = c(0,4)) +
+  scale_x_continuous(breaks = seq(1984,2018,1)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
   labs(x= "Year", y=expression(paste(" logTaxa Density ", (kg/m^3)))) +
-  scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4"))
+  scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4")) +
+  ggtitle("Aurelia_Louisiana_1984-2018")  +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.title = element_text(size = 16))
 file = "AURELIA_LA.png"
 png(file=file, width=12,height=9,units="in", res=225)
 plot(lacp)
@@ -193,19 +201,21 @@ dev.off()
 tx.shelf$pop_delta_mean_no_m3 = ifelse(tx.shelf$year == 1985, NA, tx.shelf$pop_delta_mean_no_m3)
 tx.insh$pop_delta_mean_no_m3 = ifelse(tx.insh$year == 1985, NA, tx.insh$pop_delta_mean_no_m3)
 txcp <- ggplot() +
-  # flin
+  # txin
   geom_point(data=subset(tx.insh, tx.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
   geom_line(data=subset(tx.insh, tx.insh$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
-  # flsh
+  # txsh
   geom_point(data=subset(tx.shelf, tx.shelf$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   geom_line(data=subset(tx.shelf, tx.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   theme_classic() +
-  scale_y_continuous(breaks = c(0,4,2), limits = c(0,4)) +
-  scale_x_continuous(breaks = seq(1984,2018,2)) +
+  scale_y_continuous(breaks = seq(0,4,0.5), limits = c(0,4)) +
+  scale_x_continuous(breaks = seq(1984,2018,1)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
   labs(x= "Year", y=expression(paste(" logTaxa Density ", (kg/m^3)))) +
-  scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4"))
+  scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4")) +
+  theme(plot.title = element_text(size = 16, hjust = 0.5)) +
+  ggtitle("Aurelia_Texas_1984-2018")
 file = "AURELIA_TX.png"
 png(file=file, width=12,height=9,units="in", res=225)
 plot(txcp)
