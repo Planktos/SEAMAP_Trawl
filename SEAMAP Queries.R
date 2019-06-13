@@ -523,7 +523,11 @@ result$Biomass_Den_Pelagic_kg_m2 = with(result,
 result$Biomass_Den_Demersal_kg_m2 = with(result,
                                  ifelse(is.na(Biomass_Den_Demersal_kg_m2), 0,Biomass_Den_Demersal_kg_m2))
 
-result$Season = with(result, ifelse(result$Month >= 5 & result$Month <= 8, "Summer", "Fall"))
+result$season = with(result, ifelse(test = Month <= 8 & Month > 5, yes = "summer",
+                                    no = ifelse(test = Month >= 9 & Month <= 11, yes = "fall",
+                                                no = ifelse(test = Month >2 & Month <= 4, yes = "spring", no = "winter"))))
+
+
 result$Count_Use_Count = with(result, ifelse(is.na(result$Count_Use_Count), 0, result$Count_Use_Count))
 
 
