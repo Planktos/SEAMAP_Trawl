@@ -523,7 +523,7 @@ result$Biomass_Den_Pelagic_kg_m2 = with(result,
 result$Biomass_Den_Demersal_kg_m2 = with(result,
                                  ifelse(is.na(Biomass_Den_Demersal_kg_m2), 0,Biomass_Den_Demersal_kg_m2))
 
-result$season = with(result, ifelse(test = Month <= 8 & Month > 5, yes = "summer",
+result$Season = with(result, ifelse(test = Month <= 8 & Month > 5, yes = "summer",
                                     no = ifelse(test = Month >= 9 & Month <= 11, yes = "fall",
                                                 no = ifelse(test = Month >2 & Month <= 4, yes = "spring", no = "winter"))))
 
@@ -601,5 +601,9 @@ result <- result[result$STATIONID %!in% fid2, ]
 result <- rbind(result, f)
 
 result$taxa <- taxa[1]
+
+#re-order columns
+result <- result %>% select(taxa, AggGrp_20130430, Habitat, Season, Year, Month, Day, Use_Depth_m, DECSLAT, DECSLON, DECELAT, DECELON, everything())
+
 
 write.csv(x = result, file = paste0(taxa[1], "_SEAMAP.csv"), row.names = F)
