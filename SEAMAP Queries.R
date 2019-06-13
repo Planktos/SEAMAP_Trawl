@@ -21,13 +21,16 @@ clean.whitespace<- function(y){
   gsub(pattern = ' ', replacement = "", x = y)
 }
 
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
 
 # Set specific interest groups from Name Translator Table ----
 NameTrans = read_xlsx(path = 'NameTranslator_table201305.xlsx')
 #View(NameTrans)
 
 major.grp = "jellyfish"
-taxa = c("CHRYSAORA","CHRYSAORA QUINQUECIRRHA","DACTYLOMETRA QUINQUECIRRHA")
+taxa = c("AURELIA", "AURELIA AURITA")
+#taxa = c("CHRYSAORA","CHRYSAORA QUINQUECIRRHA","DACTYLOMETRA QUINQUECIRRHA")
 
 # load SEAMAP data files "https://seamap.gsmfc.org/datarequests/index.php" -----
 INGEST_DATA = read.csv('20190329_SEAMAP_csv/INGEST_DATA.csv')
@@ -595,7 +598,6 @@ f2 <- result[result$DECELON > 0 | result$DECELAT < 10,]
 f2 <- f2[!is.na(f2$STATIONID),]
 fid2 <- f2$STATIONID
 
-'%!in%' <- function(x,y)!('%in%'(x,y))
 #remove stations with incorrect DECELAT
 result <- result[result$STATIONID %!in% fid2, ]
 result <- rbind(result, f)
