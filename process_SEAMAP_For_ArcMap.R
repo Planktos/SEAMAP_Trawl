@@ -10,7 +10,11 @@ library(plyr)
 library(dplyr)
 library(data.table)
 
-d <- as.data.frame(fread(input = "Aurelia_SEAMAP.csv", stringsAsFactors = F, sep = ",", header = T))
+taxa = c("AURELIA", "AURELIA AURITA")
+#taxa = c("CHRYSAORA","CHRYSAORA QUINQUECIRRHA","DACTYLOMETRA QUINQUECIRRHA")
+
+
+d <- as.data.frame(fread(input = paste0(taxa[1],"_SEAMAP.csv"), stringsAsFactors = F, sep = ",", header = T))
 
 d <- d[,c("AggGrp_20130430","Year", "Month", "Day","STATIONID","Subregion_Depth","Subregion_alongshore",
           "Use_Pop_Den_no_m2","Use_Biomass_Den_kg_m2","Use_Depth_m", "DECSLAT","DECSLON","DECELAT","DECELON"),]
@@ -70,5 +74,7 @@ d$decslon_ctr <- apply(X = d, MARGIN = 1, FUN = f_mean_lon)
 d[, c("decslat", "decelat", "decslon", "decelon")] = list(NULL)
 
 d <- d %>% select(stationid, agg_grp, year, month, day, depth_m, decslat_ctr, decslon_ctr, everything())
+
+d$taxa <- taxa[1]
 
 write.csv(x = d, file = paste0(unique(d$agg_grp), "_arc.csv"), row.names = F)
