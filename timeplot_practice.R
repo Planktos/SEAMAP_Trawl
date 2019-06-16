@@ -1,13 +1,14 @@
 #AUTHOR : Aidyn Creson
 #DATE:  26 April 2019
 
-#create time plot for whole gulf
+#load libraries
 library(ggplot2)
 library (tidyverse)
 library(ggThemeAssist)
 library(data.table)
 library(plyr)
 library(gtable)
+library(dplyr)
 
 # AURELIA geom_ribbon --------
 #brainstorms
@@ -222,6 +223,82 @@ plot(txcp)
 dev.off()
 
 
+
+# AURELIA and CHRYSAORA whole gulf ----------------------------------------
+awg <- data.frame(x=year, y=yr_stats$pop_delta_mean_no_m3)
+cwg <- data.frame(x=c$year, y=c$pop_den_no_m3)
+
+
+wgp2 = ggplot() +
+  geom_point(data=subset(awg, awg$year >= 1984), aes(x=awg$x,y=log(awg$y))) +
+  geom_line(data=subset(awg, awg$year >= 1984), aes(x=awg$x,y=log(awg$y))) +
+  geom_point(data=subset(cwg, cwg$year >=1984), aes(x=cwg$x,y=log(cwg$y))) +
+  geom_line(data=subset(cwg, cwg$year >=1984), aes(x=cwg$x,y=log(cwg$y))) +
+  theme_classic() +
+  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
+  scale_y_continuous(breaks = c(0,2,4,6,8,10,12,14)) +
+  scale_x_continuous(breaks = seq(1984,2018,2)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  theme(strip.background = element_blank(),strip.text.y = element_blank())
+
+plot(wgp2)
+
+
+
+# CHRYSOARA LA  -----------------------------------------------------------
+cla = ggplot(subset(chrys_la,subregion_depth %in% c("1_inshore" , "2_shelf"))) +
+  geom_line(data=subset(chrys_la, chrys_la$year >=1984), aes(x=year, y=log(pop_den_no_m3+1), group=subregion_depth, colour=subregion_depth)) +
+  geom_point(data=subset(chrys_la, chrys_la$year >=1984), aes(x=year, y=log(pop_den_no_m3+1), group=subregion_depth, colour=subregion_depth)) +
+  theme_classic() +
+  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
+  scale_y_continuous(breaks = seq(0,4,0.5), limits = c(0,4)) +
+  scale_x_continuous(breaks = seq(1984,2018,1)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  scale_color_manual(breaks = c("1_inshore", "2_shelf", "oceanic"), values=c("firebrick", "chocolate1", "blue")) +
+  ggtitle("Chrysaora_Louisiana_1984-2018") +
+  theme(plot.title = element_text(size = 16, hjust = 0.5))
+plot(cla)
+
+
+# CHRYSAORA TX ------------------------------------------------------------
+ctx = ggplot(subset(chrys_tx,subregion_depth %in% c("1_inshore" , "2_shelf"))) +
+  geom_line(data=subset(chrys_tx, chrys_tx$year >=1984), aes(x=year, y=log(pop_den_no_m3+1), group=subregion_depth, colour=subregion_depth)) +
+  geom_point(data=subset(chrys_tx, chrys_tx$year >=1984), aes(x=year, y=log(pop_den_no_m3+1), group=subregion_depth, colour=subregion_depth)) +
+  theme_classic() +
+  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
+  scale_y_continuous(breaks = seq(0,4,0.5), limits = c(0,4)) +
+  scale_x_continuous(breaks = seq(1984,2018,1)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  scale_color_manual(breaks = c("1_inshore", "2_shelf", "oceanic"), values=c("firebrick", "chocolate1", "blue")) +
+  ggtitle("Chrysaora_Texas_1984-2018") +
+  theme(plot.title = element_text(size = 16, hjust = 0.5))
+plot(ctx)
+
+
+
+
+
+
+
+
+
+# CHRYSAORA FL ------------------------------------------------------------
+cfl = ggplot(subset(chrys_fl,subregion_depth %in% c("1_inshore" , "2_shelf"))) +
+  geom_line(data=subset(chrys_fl, chrys_fl$year >=1984), aes(x=year, y=log(pop_den_no_m3+1), group=subregion_depth, colour=subregion_depth)) +
+  geom_point(data=subset(chrys_fl, chrys_fl$year >=1984), aes(x=year, y=log(pop_den_no_m3+1), group=subregion_depth, colour=subregion_depth)) +
+  theme_classic() +
+  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
+  scale_y_continuous(breaks = seq(0,4,0.5), limits = c(0,4)) +
+  scale_x_continuous(breaks = seq(1984,2018,1)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  scale_color_manual(breaks = c("1_inshore", "2_shelf", "oceanic"), values=c("firebrick", "chocolate1", "blue")) +
+  ggtitle("Chrysaora_Florida_1984-2018") +
+  theme(plot.title = element_text(size = 16, hjust = 0.5))
+plot(cfl)
 
 
 
