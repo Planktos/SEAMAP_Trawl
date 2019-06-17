@@ -224,24 +224,39 @@ dev.off()
 
 
 
-# AURELIA and CHRYSAORA whole gulf ----------------------------------------
-awg <- data.frame(x=year, y=yr_stats$pop_delta_mean_no_m3)
-cwg <- data.frame(x=c$year, y=c$pop_den_no_m3)
+# Prep Chrysaora Data Means -----------------------------------------------
+Chrys_data_mean = ddply(chrysaora_by_state, .(year), summarize,
+                        use_pop_den_mean_no_m2 = mean(use_pop_den_no_m2))
 
+Chrys_tx_data_mean = ddply(chrys_tx, .(year, subregion_depth), summarize,
+                           use_pop_den_mean_no_m2 = mean(use_pop_den_no_m2))
+
+Chrys_la_data_mean = ddply(chrys_la, .(year, subregion_depth), summarize,
+                           use_pop_den_mean_no_m2 = mean(use_pop_den_no_m2))
+
+Chrys_fl_data_mean = ddply(chrys_fl, .(year, subregion_depth), summarize,
+                           use_pop_den_mean_no_m2 = mean(use_pop_den_no_m2))
+
+
+
+
+
+# AURELIA and CHRYSAORA whole gulf ----------------------------------------
 
 wgp2 = ggplot() +
-  geom_point(data=subset(awg, awg$year >= 1984), aes(x=awg$x,y=log(awg$y))) +
-  geom_line(data=subset(awg, awg$year >= 1984), aes(x=awg$x,y=log(awg$y))) +
-  geom_point(data=subset(cwg, cwg$year >=1984), aes(x=cwg$x,y=log(cwg$y))) +
-  geom_line(data=subset(cwg, cwg$year >=1984), aes(x=cwg$x,y=log(cwg$y))) +
+  geom_point(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="chocolate1") +
+  geom_line(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="chocolate1") +
+  geom_point(data=subset(Chrys_data_mean, Chrys_data_mean$year >=1984), aes(x=year,y=log(use_pop_den_mean_no_m2+1)), colour="firebrick") +
+  geom_line(data=subset(Chrys_data_mean, Chrys_data_mean$year >=1984), aes(x=year,y=log(use_pop_den_mean_no_m2+1)), colour="firebrick") +
   theme_classic() +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
-  scale_y_continuous(breaks = c(0,2,4,6,8,10,12,14)) +
-  scale_x_continuous(breaks = seq(1984,2018,2)) +
+  scale_y_continuous(breaks = seq(0,4,0.5)) +
+  scale_x_continuous(breaks = seq(1984,2018,1)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
-  theme(strip.background = element_blank(),strip.text.y = element_blank())
-
+  scale_color_manual(values=c("black")) +
+  ggtitle("Aurelia_and_Chrysaora_WholeGulf_1984-2018") +
+  theme(plot.title = element_text(size = 16, hjust = 0.5))
 plot(wgp2)
 
 
@@ -299,6 +314,13 @@ cfl = ggplot(subset(chrys_fl,subregion_depth %in% c("1_inshore" , "2_shelf"))) +
   ggtitle("Chrysaora_Florida_1984-2018") +
   theme(plot.title = element_text(size = 16, hjust = 0.5))
 plot(cfl)
+
+
+
+
+
+
+
 
 
 
