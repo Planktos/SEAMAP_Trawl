@@ -224,30 +224,15 @@ dev.off()
 
 
 
-# Prep Chrysaora Data Means -----------------------------------------------
-Chrys_data_mean = ddply(chrysaora_by_state, .(year), summarize,
-                        use_pop_den_mean_no_m2 = mean(use_pop_den_no_m2))
-
-Chrys_tx_data_mean = ddply(chrys_tx, .(year, subregion_depth), summarize,
-                           use_pop_den_mean_no_m2 = mean(use_pop_den_no_m2))
-
-Chrys_la_data_mean = ddply(chrys_la, .(year, subregion_depth), summarize,
-                           use_pop_den_mean_no_m2 = mean(use_pop_den_no_m2))
-
-Chrys_fl_data_mean = ddply(chrys_fl, .(year, subregion_depth), summarize,
-                           use_pop_den_mean_no_m2 = mean(use_pop_den_no_m2))
-
-
-
 
 
 # AURELIA and CHRYSAORA whole gulf ----------------------------------------
 
 wgp2 = ggplot() +
-  geom_point(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="chocolate1") +
-  geom_line(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="chocolate1") +
-  geom_point(data=subset(Chrys_data_mean, Chrys_data_mean$year >=1984), aes(x=year,y=log(use_pop_den_mean_no_m2+1)), colour="firebrick") +
-  geom_line(data=subset(Chrys_data_mean, Chrys_data_mean$year >=1984), aes(x=year,y=log(use_pop_den_mean_no_m2+1)), colour="firebrick") +
+  geom_point(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="blue") +
+  geom_line(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="blue") +
+  geom_point(data=subset(yr_stats_chrys, yr_stats_chrys$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="firebrick") +
+  geom_line(data=subset(yr_stats_chrys, yr_stats_chrys$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="firebrick") +
   theme_classic() +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
   scale_y_continuous(breaks = seq(0,4,0.5)) +
@@ -257,75 +242,167 @@ wgp2 = ggplot() +
   scale_color_manual(values=c("black")) +
   ggtitle("Aurelia_and_Chrysaora_WholeGulf_1984-2018") +
   theme(plot.title = element_text(size = 16, hjust = 0.5))
+file = "AURELIA_CHRYSAORA_WHOLEGULF.png"
+png(file=file, width=12,height=9,units="in", res=225)
 plot(wgp2)
+dev.off()
 
 
 
-# CHRYSOARA LA  -----------------------------------------------------------
-cla = ggplot(subset(chrys_la,subregion_depth %in% c("1_inshore" , "2_shelf"))) +
-  geom_line(data=subset(chrys_la, chrys_la$year >=1984), aes(x=year, y=log(pop_den_no_m3+1), group=subregion_depth, colour=subregion_depth)) +
-  geom_point(data=subset(chrys_la, chrys_la$year >=1984), aes(x=year, y=log(pop_den_no_m3+1), group=subregion_depth, colour=subregion_depth)) +
+
+# CHRYSAORA FL plots ----------------------------------------------------------------
+#comparing FL inshore and shelf
+chrys.fl.shelf$pop_delta_mean_no_m3 = ifelse(chrys.fl.shelf$year == 1985, NA, chrys.fl.shelf$pop_delta_mean_no_m3)
+chrys.fl.insh$pop_delta_mean_no_m3 = ifelse(chrys.fl.insh$year == 1985, NA, chrys.fl.insh$pop_delta_mean_no_m3)
+cflcp <- ggplot() +
+  # flin
+  geom_point(data=subset(chrys.fl.insh, chrys.fl.insh$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
+  geom_line(data=subset(chrys.fl.insh, chrys.fl.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
+  # flsh
+  geom_point(data=subset(chrys.fl.shelf, chrys.fl.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
+  geom_line(data=subset(chrys.fl.shelf, chrys.fl.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
   theme_classic() +
-  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
   scale_y_continuous(breaks = seq(0,4,0.5), limits = c(0,4)) +
   scale_x_continuous(breaks = seq(1984,2018,1)) +
-  theme(axis.text.x = element_text(angle = 45)) +
-  theme(axis.text.x = element_text(vjust = 0.5)) +
-  scale_color_manual(breaks = c("1_inshore", "2_shelf", "oceanic"), values=c("firebrick", "chocolate1", "blue")) +
-  ggtitle("Chrysaora_Louisiana_1984-2018") +
-  theme(plot.title = element_text(size = 16, hjust = 0.5))
-plot(cla)
-
-
-# CHRYSAORA TX ------------------------------------------------------------
-ctx = ggplot(subset(chrys_tx,subregion_depth %in% c("1_inshore" , "2_shelf"))) +
-  geom_line(data=subset(chrys_tx, chrys_tx$year >=1984), aes(x=year, y=log(pop_den_no_m3+1), group=subregion_depth, colour=subregion_depth)) +
-  geom_point(data=subset(chrys_tx, chrys_tx$year >=1984), aes(x=year, y=log(pop_den_no_m3+1), group=subregion_depth, colour=subregion_depth)) +
-  theme_classic() +
-  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
-  scale_y_continuous(breaks = seq(0,4,0.5), limits = c(0,4)) +
-  scale_x_continuous(breaks = seq(1984,2018,1)) +
-  theme(axis.text.x = element_text(angle = 45)) +
-  theme(axis.text.x = element_text(vjust = 0.5)) +
-  scale_color_manual(breaks = c("1_inshore", "2_shelf", "oceanic"), values=c("firebrick", "chocolate1", "blue")) +
-  ggtitle("Chrysaora_Texas_1984-2018") +
-  theme(plot.title = element_text(size = 16, hjust = 0.5))
-plot(ctx)
-
-
-
-
-
-
-
-
-
-# CHRYSAORA FL ------------------------------------------------------------
-cfl = ggplot(subset(chrys_fl,subregion_depth %in% c("1_inshore" , "2_shelf"))) +
-  geom_line(data=subset(chrys_fl, chrys_fl$year >=1984), aes(x=year, y=log(pop_den_no_m3+1), group=subregion_depth, colour=subregion_depth)) +
-  geom_point(data=subset(chrys_fl, chrys_fl$year >=1984), aes(x=year, y=log(pop_den_no_m3+1), group=subregion_depth, colour=subregion_depth)) +
-  theme_classic() +
-  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
-  scale_y_continuous(breaks = seq(0,4,0.5), limits = c(0,4)) +
-  scale_x_continuous(breaks = seq(1984,2018,1)) +
-  theme(axis.text.x = element_text(angle = 45)) +
-  theme(axis.text.x = element_text(vjust = 0.5)) +
-  scale_color_manual(breaks = c("1_inshore", "2_shelf", "oceanic"), values=c("firebrick", "chocolate1", "blue")) +
   ggtitle("Chrysaora_Florida_1984-2018") +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  labs(x= "Year", y=expression(paste(" logTaxa Density ", (kg/m^3)))) +
+  scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.title = element_text(size = 16))
+file = "CHRYSAORA_FL.png"
+png(file=file, width=12,height=9,units="in", res=225)
+plot(cflcp)
+dev.off()
+
+
+# CHRYSAORA LA plots --------------------------------------------------------
+#comparing LA inshore and shelf
+chrys.la.shelf$pop_delta_mean_no_m3 = ifelse(chrys.la.shelf$year == 1985, NA, chrys.la.shelf$pop_delta_mean_no_m3)
+chrys.la.insh$pop_delta_mean_no_m3 = ifelse(chrys.la.insh$year == 1985, NA, chrys.la.insh$pop_delta_mean_no_m3)
+clacp <- ggplot() +
+  # lain
+  geom_point(data=subset(chrys.la.insh, chrys.la.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
+  geom_line(data=subset(chrys.la.insh, chrys.la.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
+  # lash
+  geom_point(data=subset(chrys.la.shelf, chrys.la.shelf$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
+  geom_line(data=subset(chrys.la.shelf, chrys.la.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
+  theme_classic() +
+  scale_y_continuous(breaks = seq(0,4,0.5), limits = c(0,4)) +
+  scale_x_continuous(breaks = seq(1984,2018,1)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  labs(x= "Year", y=expression(paste(" logTaxa Density ", (kg/m^3)))) +
+  scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4")) +
+  ggtitle("Chrysaora_Louisiana_1984-2018")  +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.title = element_text(size = 16))
+file = "CHRYSAORA_LA.png"
+png(file=file, width=12,height=9,units="in", res=225)
+plot(clacp)
+dev.off()
+
+
+
+
+# CHRYSAORA TX plots --------------------------------------------------------
+#comparing TX inshore and shelf
+chrys.tx.shelf$pop_delta_mean_no_m3 = ifelse(chrys.tx.shelf$year == 1985, NA, chrys.tx.shelf$pop_delta_mean_no_m3)
+chrys.tx.insh$pop_delta_mean_no_m3 = ifelse(chrys.tx.insh$year == 1985, NA, chrys.tx.insh$pop_delta_mean_no_m3)
+ctxcp <- ggplot() +
+  # txin
+  geom_point(data=subset(chrys.tx.insh, chrys.tx.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
+  geom_line(data=subset(chrys.tx.insh, chrys.tx.insh$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
+  # txsh
+  geom_point(data=subset(chrys.tx.shelf, chrys.tx.shelf$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
+  geom_line(data=subset(chrys.tx.shelf, chrys.tx.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
+  theme_classic() +
+  scale_y_continuous(breaks = seq(0,4,0.5), limits = c(0,4)) +
+  scale_x_continuous(breaks = seq(1984,2018,1)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  labs(x= "Year", y=expression(paste(" logTaxa Density ", (kg/m^3)))) +
+  scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4")) +
+  theme(plot.title = element_text(size = 16, hjust = 0.5)) +
+  ggtitle("Chrysaora_Texas_1984-2018")
+file = "CHRYSAORA_TX.png"
+png(file=file, width=12,height=9,units="in", res=225)
+plot(ctxcp)
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+# TX plot -----------------------------------------------------------------
+shore_stats = rbind(yr_shore_stats, yr_shore_stats_chrys)
+txp = ggplot() +
+ geom_point(data=subset(shore_stats, subregion_alongshore == "1_Tex" & year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1))) +
+  geom_line(data=subset(shore_stats,subregion_alongshore == "1_Tex" & year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1))) +
+  theme_classic() +
+  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
+  scale_y_continuous(breaks = seq(0,4,0.5)) +
+  scale_x_continuous(breaks = seq(1984,2018,1)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  scale_color_manual(values=c("black")) +
+  ggtitle("Aurelia_and_Chrysaora_Texas_1984-2018") +
   theme(plot.title = element_text(size = 16, hjust = 0.5))
-plot(cfl)
+file = "AURELIA_CHRYSAORA_TEXAS.png"
+png(file=file, width=12,height=9,units="in", res=225)
+plot(txp)
+dev.off()
 
 
 
+# LA plot -----------------------------------------------------------------
+shore_stats = rbind(yr_shore_stats, yr_shore_stats_chrys)
+lap = ggplot() +
+  geom_point(data=subset(shore_stats, subregion_alongshore == "2_Lou" & year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1))) +
+  geom_line(data=subset(shore_stats,subregion_alongshore == "2_Lou" & year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1))) +
+  theme_classic() +
+  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
+  scale_y_continuous(breaks = seq(0,4,0.5)) +
+  scale_x_continuous(breaks = seq(1984,2018,1)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  scale_color_manual(values=c("black")) +
+  ggtitle("Aurelia_and_Chrysaora_Louisiana_1984-2018") +
+  theme(plot.title = element_text(size = 16, hjust = 0.5))
+file = "AURELIA_CHRYSAORA_LOUISIANA.png"
+png(file=file, width=12,height=9,units="in", res=225)
+plot(lap)
+dev.off()
 
 
 
-
-
-
-
-
-
+# FL plot -----------------------------------------------------------------
+shore_stats = rbind(yr_shore_stats, yr_shore_stats_chrys)
+flp = ggplot() +
+  geom_point(data=subset(shore_stats, subregion_alongshore == "3_Fla" & year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1))) +
+  geom_line(data=subset(shore_stats,subregion_alongshore == "3_Fla" & year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1))) +
+  theme_classic() +
+  labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
+  scale_y_continuous(breaks = seq(0,4,0.5)) +
+  scale_x_continuous(breaks = seq(1984,2018,1)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(vjust = 0.5)) +
+  scale_color_manual(values=c("black")) +
+  ggtitle("Aurelia_and_Chrysaora_Florida_1984-2018") +
+  theme(plot.title = element_text(size = 16, hjust = 0.5))
+file = "AURELIA_CHRYSAORA_FLORIDA.png"
+png(file=file, width=12,height=9,units="in", res=225)
+plot(flp)
+dev.off()
 
 
 
