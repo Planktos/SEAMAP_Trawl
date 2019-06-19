@@ -528,6 +528,8 @@ result$Count_Use_Count = with(result, ifelse(is.na(result$Count_Use_Count), 0, r
 
 
 #fix some weird values in lat and lon coordinates
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
 f <- result[result$DECSLON > 0 | result$DECSLAT > 35,]
 f <- f[!is.na(f$STATIONID),]
 fid <- f$STATIONID
@@ -591,7 +593,7 @@ f2 <- result[result$DECELON > 0 | result$DECELAT < 10,]
 f2 <- f2[!is.na(f2$STATIONID),]
 fid2 <- f2$STATIONID
 
-'%!in%' <- function(x,y)!('%in%'(x,y))
+
 #remove stations with incorrect DECELAT
 result <- result[result$STATIONID %!in% fid2, ]
 result <- rbind(result, f)
