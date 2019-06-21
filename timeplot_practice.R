@@ -163,8 +163,8 @@ flcp <- ggplot() +
   theme(plot.title = element_text(hjust = 0.5)) +
   theme(plot.title = element_text(size = 16))
 file = "AURELIA_FL.png"
-png(file=file, width=12,height=9,units="in", res=225)
 plot(flcp)
+png(file=file, width=12,height=9,units="in", res=225)
 dev.off()
 
 
@@ -227,11 +227,10 @@ dev.off()
 
 
 # AURELIA and CHRYSAORA whole gulf ----------------------------------------
-
 wgp2 = ggplot() +
-  geom_point(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="blue") +
-  geom_line(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="blue") +
-  geom_point(data=subset(yr_stats_chrys, yr_stats_chrys$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="firebrick") +
+  geom_point(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="blue", shape = 1, size = 2) +
+  geom_line(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="blue", linetype = "dashed") +
+  geom_point(data=subset(yr_stats_chrys, yr_stats_chrys$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="firebrick", shape = 2, size = 2) +
   geom_line(data=subset(yr_stats_chrys, yr_stats_chrys$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), colour="firebrick") +
   theme_classic() +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
@@ -345,9 +344,11 @@ dev.off()
 
 # TX plot -----------------------------------------------------------------
 shore_stats = rbind(yr_shore_stats, yr_shore_stats_chrys)
+shore_stats_total = ddply(shore_stats, .(year, subregion_alongshore), summarize,
+                          total_pop_delta_mean_no_m3 = sum(pop_delta_mean_no_m3))
 txp = ggplot() +
- geom_point(data=subset(shore_stats, subregion_alongshore == "1_Tex" & year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1))) +
-  geom_line(data=subset(shore_stats,subregion_alongshore == "1_Tex" & year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1))) +
+ geom_point(data=subset(shore_stats_total, subregion_alongshore == "1_Tex" & year >= 1984), aes(x=year,y=log(total_pop_delta_mean_no_m3+1))) +
+  geom_line(data=subset(shore_stats_total,subregion_alongshore == "1_Tex" & year >= 1984), aes(x=year,y=log(total_pop_delta_mean_no_m3+1))) +
   theme_classic() +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
   scale_y_continuous(breaks = seq(0,4,0.5)) +
@@ -365,10 +366,9 @@ dev.off()
 
 
 # LA plot -----------------------------------------------------------------
-shore_stats = rbind(yr_shore_stats, yr_shore_stats_chrys)
 lap = ggplot() +
-  geom_point(data=subset(shore_stats, subregion_alongshore == "2_Lou" & year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1))) +
-  geom_line(data=subset(shore_stats,subregion_alongshore == "2_Lou" & year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1))) +
+  geom_point(data=subset(shore_stats_total, subregion_alongshore == "2_Lou" & year >= 1984), aes(x=year,y=log(total_pop_delta_mean_no_m3+1))) +
+  geom_line(data=subset(shore_stats_total,subregion_alongshore == "2_Lou" & year >= 1984), aes(x=year,y=log(total_pop_delta_mean_no_m3+1))) +
   theme_classic() +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
   scale_y_continuous(breaks = seq(0,4,0.5)) +
@@ -386,10 +386,9 @@ dev.off()
 
 
 # FL plot -----------------------------------------------------------------
-shore_stats = rbind(yr_shore_stats, yr_shore_stats_chrys)
 flp = ggplot() +
-  geom_point(data=subset(shore_stats, subregion_alongshore == "3_Fla" & year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1))) +
-  geom_line(data=subset(shore_stats,subregion_alongshore == "3_Fla" & year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1))) +
+  geom_point(data=subset(shore_stats_total, subregion_alongshore == "3_Fla" & year >= 1984), aes(x=year,y=log(total_pop_delta_mean_no_m3+1))) +
+  geom_line(data=subset(shore_stats_total,subregion_alongshore == "3_Fla" & year >= 1984), aes(x=year,y=log(total_pop_delta_mean_no_m3+1))) +
   theme_classic() +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
   scale_y_continuous(breaks = seq(0,4,0.5)) +
