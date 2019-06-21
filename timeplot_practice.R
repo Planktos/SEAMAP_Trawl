@@ -141,17 +141,18 @@ gulfts <- ggplot() +
 plot(gulfts)
 
 
+
 # AURELIA FL plots ----------------------------------------------------------------
 #comparing FL inshore and shelf
 fl.shelf$pop_delta_mean_no_m3 = ifelse(fl.shelf$year == 1985, NA, fl.shelf$pop_delta_mean_no_m3)
 fl.insh$pop_delta_mean_no_m3 = ifelse(fl.insh$year == 1985, NA, fl.insh$pop_delta_mean_no_m3)
 flcp <- ggplot() +
   # flin
-  geom_point(data=subset(fl.insh, fl.insh$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
-  geom_line(data=subset(fl.insh, fl.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
+  geom_point(data=subset(fl.insh, fl.insh$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore"), shape = 4, size = 2) +
+  geom_line(data=subset(fl.insh, fl.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE, colour="Inshore"), linetype = "dotted") +
   # flsh
-  geom_point(data=subset(fl.shelf, fl.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
-  geom_line(data=subset(fl.shelf, fl.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
+  geom_point(data=subset(fl.shelf, fl.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf"), shape = 5, size = 2) +
+  geom_line(data=subset(fl.shelf, fl.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf"), linetype = "solid") +
   theme_classic() +
   scale_y_continuous(breaks = seq(0,4,0.5), limits = c(0,4)) +
   scale_x_continuous(breaks = seq(1984,2018,1)) +
@@ -159,9 +160,15 @@ flcp <- ggplot() +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
   labs(x= "Year", y=expression(paste(" logTaxa Density ", (kg/m^3)))) +
-  scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4")) +
+  scale_color_manual(name="Subregion_Alongshore", values = c(Shelf="coral3", Inshore="darkseagreen4")) +
   theme(plot.title = element_text(hjust = 0.5)) +
-  theme(plot.title = element_text(size = 16))
+  theme(plot.title = element_text(size = 16)) +
+  guides(colour = guide_legend(override.aes = list(
+    linetype = c("dotted", "solid"),
+    shape = c(4,5),
+    color = c("darkseagreen4","coral3")))) +
+  theme(legend.background = element_rect(fill = NA),
+        legend.position = c(0.9, 0.9), legend.key = element_rect(fill = NA))
 file = "AURELIA_FL.png"
 plot(flcp)
 png(file=file, width=12,height=9,units="in", res=225)
@@ -174,21 +181,27 @@ la.shelf$pop_delta_mean_no_m3 = ifelse(la.shelf$year == 1985, NA, la.shelf$pop_d
 la.insh$pop_delta_mean_no_m3 = ifelse(la.insh$year == 1985, NA, la.insh$pop_delta_mean_no_m3)
 lacp <- ggplot() +
   # lain
-  geom_point(data=subset(la.insh, la.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
-  geom_line(data=subset(la.insh, la.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
+  geom_point(data=subset(la.insh, la.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore"), shape = 4, size = 2) +
+  geom_line(data=subset(la.insh, la.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore"), linetype = "dotted") +
   # lash
-  geom_point(data=subset(la.shelf, la.shelf$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
-  geom_line(data=subset(la.shelf, la.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
+  geom_point(data=subset(la.shelf, la.shelf$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf"), shape = 5, size = 2) +
+  geom_line(data=subset(la.shelf, la.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf"), linetype = "solid") +
   theme_classic() +
   scale_y_continuous(breaks = seq(0,4,0.5), limits = c(0,4)) +
   scale_x_continuous(breaks = seq(1984,2018,1)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
   labs(x= "Year", y=expression(paste(" logTaxa Density ", (kg/m^3)))) +
-  scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4")) +
+  scale_color_manual(name="Subregion_Alongshore", values = c(Shelf="coral3", Inshore="darkseagreen4")) +
   ggtitle("Aurelia_Louisiana_1984-2018")  +
   theme(plot.title = element_text(hjust = 0.5)) +
-  theme(plot.title = element_text(size = 16))
+  theme(plot.title = element_text(size = 16)) +
+  guides(colour = guide_legend(override.aes = list(
+    linetype = c("dotted", "solid"),
+    shape = c(4,5),
+    color = c("darkseagreen4","coral3")))) +
+  theme(legend.background = element_rect(fill = NA),
+        legend.position = c(0.9, 0.9), legend.key = element_rect(fill = NA))
 file = "AURELIA_LA.png"
 png(file=file, width=12,height=9,units="in", res=225)
 plot(lacp)
@@ -203,24 +216,32 @@ tx.shelf$pop_delta_mean_no_m3 = ifelse(tx.shelf$year == 1985, NA, tx.shelf$pop_d
 tx.insh$pop_delta_mean_no_m3 = ifelse(tx.insh$year == 1985, NA, tx.insh$pop_delta_mean_no_m3)
 txcp <- ggplot() +
   # txin
-  geom_point(data=subset(tx.insh, tx.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
-  geom_line(data=subset(tx.insh, tx.insh$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore")) +
+  geom_point(data=subset(tx.insh, tx.insh$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore"), shape = 4, size = 2) +
+  geom_line(data=subset(tx.insh, tx.insh$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Inshore"), linetype = "dotted") +
   # txsh
-  geom_point(data=subset(tx.shelf, tx.shelf$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
-  geom_line(data=subset(tx.shelf, tx.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf")) +
+  geom_point(data=subset(tx.shelf, tx.shelf$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf"), shape = 5, size = 2) +
+  geom_line(data=subset(tx.shelf, tx.shelf$year >=1984), aes(x=year, y=log(pop_delta_mean_no_m3+1), na.rm=TRUE,colour="Shelf"), linetype = "solid") +
   theme_classic() +
   scale_y_continuous(breaks = seq(0,4,0.5), limits = c(0,4)) +
   scale_x_continuous(breaks = seq(1984,2018,1)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
   labs(x= "Year", y=expression(paste(" logTaxa Density ", (kg/m^3)))) +
-  scale_color_manual(name="Region", values = c(Shelf="coral3", Inshore="darkseagreen4")) +
+  scale_color_manual(name="Subregion_Alongshore", values = c(Shelf="coral3", Inshore="darkseagreen4")) +
   theme(plot.title = element_text(size = 16, hjust = 0.5)) +
-  ggtitle("Aurelia_Texas_1984-2018")
+  ggtitle("Aurelia_Texas_1984-2018") +
+  guides(colour = guide_legend(override.aes = list(
+    linetype = c("dotted", "solid"),
+    shape = c(4,5),
+    color = c("darkseagreen4","coral3")))) +
+  theme(legend.background = element_rect(fill = NA),
+        legend.position = c(0.9, 0.9), legend.key = element_rect(fill = NA))
 file = "AURELIA_TX.png"
 png(file=file, width=12,height=9,units="in", res=225)
 plot(txcp)
 dev.off()
+
+
 
 
 
@@ -238,13 +259,20 @@ wgp2 = ggplot() +
   scale_x_continuous(breaks = seq(1984,2018,1)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
-  scale_color_manual(values=c("black")) +
+  scale_color_manual(name="Taxa", values = c(Aurelia="blue", Chrysoara="firebrick")) +
   ggtitle("Aurelia_and_Chrysaora_WholeGulf_1984-2018") +
-  theme(plot.title = element_text(size = 16, hjust = 0.5))
+  theme(plot.title = element_text(size = 16, hjust = 0.5)) +
+  guides(colour = guide_legend(override.aes = list(
+    linetype = c("dashed", "solid"),
+    shape = c(1,2),
+    color = c("blue","firebrick")))) +
+  theme(legend.background = element_rect(fill = NA),
+        legend.position = c(0.9, 0.9), legend.key = element_rect(fill = NA))
 file = "AURELIA_CHRYSAORA_WHOLEGULF.png"
 png(file=file, width=12,height=9,units="in", res=225)
 plot(wgp2)
 dev.off()
+
 
 
 
@@ -342,6 +370,7 @@ dev.off()
 
 
 
+
 # TX plot -----------------------------------------------------------------
 shore_stats = rbind(yr_shore_stats, yr_shore_stats_chrys)
 shore_stats_total = ddply(shore_stats, .(year, subregion_alongshore), summarize,
@@ -402,6 +431,10 @@ file = "AURELIA_CHRYSAORA_FLORIDA.png"
 png(file=file, width=12,height=9,units="in", res=225)
 plot(flp)
 dev.off()
+
+
+
+
 
 
 
