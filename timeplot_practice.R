@@ -270,8 +270,8 @@ dev.off()
 wgp2 = ggplot() +
   geom_point(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), colour="Aurelia", na.rm=TRUE), shape = 1, size = 2) +
   geom_line(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), colour="Aurelia", na.rm=TRUE), linetype = "dashed") +
-  geom_point(data=subset(yr_stats_chrys, yr_stats_chrys$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), color="Chrysoara"), shape = 2, size = 2) +
-  geom_line(data=subset(yr_stats_chrys, yr_stats_chrys$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), color="Chrysoara")) +
+  geom_point(data=subset(yr_stats_chrys, yr_stats_chrys$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), color="Chrysaora"), shape = 2, size = 2) +
+  geom_line(data=subset(yr_stats_chrys, yr_stats_chrys$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), color="Chrysaora")) +
   theme_classic() +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
   scale_y_continuous(breaks = seq(0,4,0.5)) +
@@ -284,7 +284,7 @@ wgp2 = ggplot() +
   guides(colour = guide_legend(override.aes = list(
     linetype = c("dashed", "solid"),
     shape = c(1,2),
-   color = c("Aurelia" = "blue", "Chyrsaora" = "firebrick")))) +
+   color = c("Aurelia" = "blue", "Chrysaora" = "firebrick")))) +
   theme(legend.background = element_rect(fill = NA),
         legend.position = c(0.9, 0.9), legend.key = element_rect(fill = NA)) +
   theme(axis.ticks = element_line(size = 0.5),
