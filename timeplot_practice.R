@@ -268,23 +268,23 @@ dev.off()
 
 # AURELIA and CHRYSAORA whole gulf ----------------------------------------
 wgp2 = ggplot() +
-  geom_point(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), color="blue", shape = 1, size = 2) +
-  geom_line(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), color="blue", linetype = "dashed") +
-  geom_point(data=subset(yr_stats_chrys, yr_stats_chrys$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), color="firebrick", shape = 2, size = 2) +
-  geom_line(data=subset(yr_stats_chrys, yr_stats_chrys$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1)), color="firebrick") +
+  geom_point(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), colour="Aurelia", na.rm=TRUE), shape = 1, size = 2) +
+  geom_line(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), colour="Aurelia", na.rm=TRUE), linetype = "dashed") +
+  geom_point(data=subset(yr_stats_chrys, yr_stats_chrys$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), color="Chrysoara"), shape = 2, size = 2) +
+  geom_line(data=subset(yr_stats_chrys, yr_stats_chrys$year >=1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), color="Chrysoara")) +
   theme_classic() +
   labs(x= "Year", y=expression(paste(" Taxa Density ", (kg/m^3)))) +
   scale_y_continuous(breaks = seq(0,4,0.5)) +
   scale_x_continuous(breaks = seq(1984,2018,1)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
-  scale_color_manual(name="Taxa", values = c("Aurelia"="blue","Chrysaora"= "firebrick")) +
+  scale_color_manual(name="Taxa", values = c("blue","firebrick")) +
   ggtitle("Aurelia_and_Chrysaora_WholeGulf_1984-2018") +
   theme(plot.title = element_text(size = 16, hjust = 0.5)) +
-  #guides(colour = guide_legend(override.aes = list(
-    #linetype = c("dashed", "solid"),
-    #shape = c(1,2),
-   #color = c("blue","firebrick")))) +
+  guides(colour = guide_legend(override.aes = list(
+    linetype = c("dashed", "solid"),
+    shape = c(1,2),
+   color = c("Aurelia" = "blue", "Chyrsaora" = "firebrick")))) +
   theme(legend.background = element_rect(fill = NA),
         legend.position = c(0.9, 0.9), legend.key = element_rect(fill = NA)) +
   theme(axis.ticks = element_line(size = 0.5),
