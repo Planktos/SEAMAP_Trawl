@@ -142,8 +142,11 @@ plot(gulfts)
 
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> d1502120c070554db4bba7b3e40d066fcaecc85c
 # AURELIA FL plots ----------------------------------------------------------------
 #comparing FL inshore and shelf
 fl.shelf$pop_delta_mean_no_m3 = ifelse(fl.shelf$year == 1985, NA, fl.shelf$pop_delta_mean_no_m3)
@@ -170,11 +173,15 @@ flcp <- ggplot() +
     shape = c(4,5),
     color = c("darkseagreen4","coral3")))) +
   theme(legend.background = element_rect(fill = NA),
+<<<<<<< HEAD
         legend.position = c(0.9, 0.9), legend.key = element_rect(fill = NA)) +
   theme(axis.ticks = element_line(size = 0.5),
         axis.text.x = element_text(size = 0)) +
   theme( axis.line.x = element_line(colour = "white",
                                     size = 1, linetype = "solid"))
+=======
+        legend.position = c(0.9, 0.9), legend.key = element_rect(fill = NA))
+>>>>>>> d1502120c070554db4bba7b3e40d066fcaecc85c
 file = "AURELIA_FL.png"
 png(file=file, width=12,height=9,units="in", res=225)
 plot(flcp)
@@ -207,11 +214,15 @@ lacp <- ggplot() +
     shape = c(4,5),
     color = c("darkseagreen4","coral3")))) +
   theme(legend.background = element_rect(fill = NA),
+<<<<<<< HEAD
         legend.position = c(0.9, 0.9), legend.key = element_rect(fill = NA)) +
   theme(axis.ticks = element_line(size = 0.5),
         axis.text.x = element_text(size = 0)) +
   theme( axis.line.x = element_line(colour = "white",
                                     size = 1, linetype = "solid"))
+=======
+        legend.position = c(0.9, 0.9), legend.key = element_rect(fill = NA))
+>>>>>>> d1502120c070554db4bba7b3e40d066fcaecc85c
 file = "AURELIA_LA.png"
 png(file=file, width=12,height=9,units="in", res=225)
 plot(lacp)
@@ -245,11 +256,15 @@ txcp <- ggplot() +
     shape = c(4,5),
     color = c("darkseagreen4","coral3")))) +
   theme(legend.background = element_rect(fill = NA),
+<<<<<<< HEAD
         legend.position = c(0.9, 0.9), legend.key = element_rect(fill = NA)) +
   theme(axis.ticks = element_line(size = 0.5),
         axis.text.x = element_text(size = 0)) +
   theme( axis.line.x = element_line(colour = "white",
                                     size = 1, linetype = "solid"))
+=======
+        legend.position = c(0.9, 0.9), legend.key = element_rect(fill = NA))
+>>>>>>> d1502120c070554db4bba7b3e40d066fcaecc85c
 file = "AURELIA_TX.png"
 png(file=file, width=12,height=9,units="in", res=225)
 plot(txcp)
@@ -261,11 +276,14 @@ dev.off()
 
 
 
+<<<<<<< HEAD
 
 
 
 
 
+=======
+>>>>>>> d1502120c070554db4bba7b3e40d066fcaecc85c
 # AURELIA and CHRYSAORA whole gulf ----------------------------------------
 wgp2 = ggplot() +
   geom_point(data=subset(yr_stats, yr_stats$year >= 1984), aes(x=year,y=log(pop_delta_mean_no_m3+1), colour="Aurelia", na.rm=TRUE), shape = 1, size = 2) +
@@ -278,12 +296,17 @@ wgp2 = ggplot() +
   scale_x_continuous(breaks = seq(1984,2018,1)) +
   theme(axis.text.x = element_text(angle = 45)) +
   theme(axis.text.x = element_text(vjust = 0.5)) +
+<<<<<<< HEAD
   scale_color_manual(name="Taxa", values = c("blue","firebrick")) +
+=======
+  scale_color_manual(name="Taxa", values = c(Aurelia="blue", Chrysoara="firebrick")) +
+>>>>>>> d1502120c070554db4bba7b3e40d066fcaecc85c
   ggtitle("Aurelia_and_Chrysaora_WholeGulf_1984-2018") +
   theme(plot.title = element_text(size = 16, hjust = 0.5)) +
   guides(colour = guide_legend(override.aes = list(
     linetype = c("dashed", "solid"),
     shape = c(1,2),
+<<<<<<< HEAD
    color = c("Aurelia" = "blue", "Chrysaora" = "firebrick")))) +
   theme(legend.background = element_rect(fill = NA),
         legend.position = c(0.9, 0.9), legend.key = element_rect(fill = NA)) +
@@ -291,6 +314,11 @@ wgp2 = ggplot() +
         axis.text.x = element_text(size = 0)) +
   theme(axis.line.x = element_line(colour = "white",
                                     size = 1, linetype = "solid"))
+=======
+    color = c("blue","firebrick")))) +
+  theme(legend.background = element_rect(fill = NA),
+        legend.position = c(0.9, 0.9), legend.key = element_rect(fill = NA))
+>>>>>>> d1502120c070554db4bba7b3e40d066fcaecc85c
 file = "AURELIA_CHRYSAORA_WHOLEGULF.png"
 png(file=file, width=12,height=9,units="in", res=225)
 plot(wgp2)
@@ -300,10 +328,13 @@ dev.off()
 
 
 
+<<<<<<< HEAD
 
 
 
 
+=======
+>>>>>>> d1502120c070554db4bba7b3e40d066fcaecc85c
 # CHRYSAORA FL plots ----------------------------------------------------------------
 #comparing FL inshore and shelf
 chrys.fl.shelf$pop_delta_mean_no_m3 = ifelse(chrys.fl.shelf$year == 1985, NA, chrys.fl.shelf$pop_delta_mean_no_m3)
@@ -424,6 +455,7 @@ dev.off()
 
 
 
+<<<<<<< HEAD
 
 
 
@@ -432,6 +464,8 @@ dev.off()
 
 
 
+=======
+>>>>>>> d1502120c070554db4bba7b3e40d066fcaecc85c
 # TX plot -----------------------------------------------------------------
 shore_stats = rbind(yr_shore_stats, yr_shore_stats_chrys)
 shore_stats_total = ddply(shore_stats, .(year, subregion_alongshore), summarize,
