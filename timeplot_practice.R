@@ -176,8 +176,8 @@ flcp <- ggplot() +
   theme( axis.line.x = element_line(colour = "white",
                                     size = 1, linetype = "solid"))
 file = "AURELIA_FL.png"
-plot(flcp)
 png(file=file, width=12,height=9,units="in", res=225)
+plot(flcp)
 dev.off()
 
 
