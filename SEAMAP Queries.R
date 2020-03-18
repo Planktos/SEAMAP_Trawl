@@ -26,8 +26,8 @@ clean.whitespace<- function(y){
 NameTrans = read_xlsx(path = 'NameTranslator_table201305.xlsx')
 #View(NameTrans)
 
-major.grp = "jellyfish"
-taxa = c("AURELIA","AURELIA AURITA")
+major.grp = "invertebrate"
+taxa = Species_List$anchovies
 
 # load SEAMAP data files "https://seamap.gsmfc.org/datarequests/index.php" -----
 INGEST_DATA = read.csv('20190329_SEAMAP_csv/INGEST_DATA.csv')
@@ -135,7 +135,8 @@ Fish_Wt_1 = subset(Fish_Wt_1, major_group %in% major.grp & TAXONOMIC %in% taxa)
 
 
 #Create Measurement type column
-Fish_Wt_1$Measurement_Type = with(Fish_Wt_1, ifelse(MEASCD_GLF == 18, "TL", ifelse(MEASCD_GLF == 2, "SL", "FL")))
+Fish_Wt_1$Measurement_Type = with(Fish_Wt_1, ifelse(MEASCD_GLF %in% 18, "TL", ifelse(MEASCD_GLF %in% 2, "SL", "FL")))
+
 
 
 #Creating use_TL_cm column
@@ -598,4 +599,5 @@ fid2 <- f2$STATIONID
 result <- result[result$STATIONID %!in% fid2, ]
 result <- rbind(result, f)
 
-write.csv(x = result, file = paste0(taxa[1], "_SEAMAP.csv"), row.names = F)
+path = "/Users/Stacy/Desktop/GoMRI Files/SEAMAP data/SEAMAP Biomass/"
+write.csv(x = result, file = paste0(path, taxa[1], "_SEAMAP.csv"), row.names = F)
