@@ -18,15 +18,13 @@ library(lubridate)
 
 # Data --------------------------------------------------------------------
 
-NameTrans = read_xlsx("NameTranslator_table201305.xlsx")
+NameTrans = read_xlsx("NameTranslator_table06012020.xlsx")
 
 NameTrans = subset(NameTrans, NameTrans$AggGrp_20130430 != 'ignore')
 
 
 
 # Subsetting by Functional Group ------------------------------------------
-FG = as.list(unique(NameTrans$AggGrp_20130430))
-FG = as.data.frame(FG)
 
 FG_list = split(NameTrans, f = NameTrans$AggGrp_20130430)
 
