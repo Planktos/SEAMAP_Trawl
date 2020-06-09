@@ -22,9 +22,29 @@ clean.whitespace<- function(y){
 }
 
 
-# Set specific interest groups from Name Translator Table ----
-NameTrans = read_xlsx(path = 'NameTranslator_table201305.xlsx')
+
+# Importing Name Translator Table and creating species lists for each functional group--------
+
+NameTrans = read_xlsx(path = 'NameTranslator_table06012020.xlsx')
 #View(NameTrans)
+
+NameTrans = subset(NameTrans, NameTrans$AggGrp_20130430 != 'ignore')
+
+FG_list = split(NameTrans, f = NameTrans$AggGrp_20130430)
+
+
+
+FuncList = function(x)
+{
+  Sp = as.list((unique(x$TAXONOMIC)))
+  #names(Sp) = paste("FuncGrp", x, sep = "_")
+  return(Sp)
+}
+
+
+Species_List = lapply(FG_list, FuncList)
+
+# Set specific interest groups from Name Translator Table ----
 
 major.grp = "invertebrate"
 taxa = Species_List$anchovies
