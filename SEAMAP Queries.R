@@ -46,8 +46,9 @@ Species_List = lapply(FG_list, FuncList)
 
 # Set specific interest groups from Name Translator Table ----
 
-major.grp = "invertebrate"
-taxa = Species_List$anchovies
+major.grp = "fish"
+taxa = Species_List$`large demersal`
+
 
 # load SEAMAP data files "https://seamap.gsmfc.org/datarequests/index.php" -----
 INGEST_DATA = read.csv('20190329_SEAMAP_csv/INGEST_DATA.csv')
@@ -74,6 +75,8 @@ rm(s.names)
 #clean quotes off of data
 STAREC[] <- sapply(X = STAREC, FUN = clean.quotes)
 STAREC$GEARS <- sapply(X = STAREC$GEARS, FUN = clean.whitespace)
+
+
 
 
 #START QUERY CHAIN --------
@@ -619,5 +622,7 @@ fid2 <- f2$STATIONID
 result <- result[result$STATIONID %!in% fid2, ]
 result <- rbind(result, f)
 
-path = "/Users/Stacy/Desktop/GoMRI Files/SEAMAP data/SEAMAP Biomass/"
-write.csv(x = result, file = paste0(path, taxa[1], "_SEAMAP.csv"), row.names = F)
+path = "~/Desktop/GoMRI Files/SEAMAP data/SEAMAP Oceanic Biomass/"
+write.csv(x = result, file = paste0(path, taxa, "_SEAMAP.csv"), row.names = F)
+
+
