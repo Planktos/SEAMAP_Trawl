@@ -258,7 +258,7 @@ numeric.cols <- c("STATIONID", "CRUISEID", "VESSEL", "CRUISE_NO", "DECSLAT", "DE
                     "DECELON", "DEPTH_SSTA", "DEPTH_ESTA", "VESSEL_SPD")
 
 STA[,numeric.cols] = suppressWarnings(apply(STA[,numeric.cols], 2, function(x) as.numeric((x)))) #make numeric columns actually numeric data type
-STA$MO_DAY_YR <- as.POSIXct(strptime(x = STA$MO_DAY_YR, format = "%Y-%m-%d")) #change data type for date field
+STA$MO_DAY_YR <- as.POSIXct(strptime(x = STA$MO_DAY_YR, format = "%m/%d/%y")) #change data type for date field
 STA <- STA[rowSums(is.na(STA)) != ncol(STA), ] #Remove records where ALL fields have NA values
 
 ENV = subset(ENVREC, select = c("STATIONID", "DEPTH_EWTR", "DEPTH_EMAX"))
@@ -623,6 +623,6 @@ result <- result[result$STATIONID %!in% fid2, ]
 result <- rbind(result, f)
 
 path = "~/Desktop/GoMRI Files/SEAMAP data/SEAMAP Oceanic Biomass/"
-write.csv(x = result, file = paste0(path, taxa, "_SEAMAP.csv"), row.names = F)
+write.csv(x = result, file = paste0(path, taxa[1], "_SEAMAP.csv"), row.names = F)
 
 
