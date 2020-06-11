@@ -47,7 +47,7 @@ Species_List = lapply(FG_list, FuncList)
 # Set specific interest groups from Name Translator Table ----
 
 major.grp = "fish"
-taxa = Species_List$`large demersal`
+taxa = Species_List$`offshore sharks`
 
 
 # load SEAMAP data files "https://seamap.gsmfc.org/datarequests/index.php" -----
