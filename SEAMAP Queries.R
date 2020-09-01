@@ -25,7 +25,7 @@ clean.whitespace<- function(y){
 
 # Importing Name Translator Table and creating species lists for each functional group--------
 
-NameTrans = read_xlsx(path = 'NameTranslator_table06012020.xlsx')
+NameTrans = read_xlsx(path = 'NameTranslator_table09012020.xlsx')
 #View(NameTrans)
 
 NameTrans = subset(NameTrans, NameTrans$AggGrp_20130430 != 'ignore')
@@ -45,9 +45,9 @@ FuncList = function(x)
 Species_List = lapply(FG_list, FuncList)
 
 # Set specific interest groups from Name Translator Table ----
-
-major.grp = "fish"
-taxa = Species_List$`offshore sharks`
+####CHECK TO SEE IF LEN_GLF IS DIVIDED BY 10 OR NOT IN Fish_WT_1 step (line 166)! ****ONLY PENAEID SHRIMP DO NOT NEED TO BE DIVIDED BY 10
+major.grp = "invertebrate"
+taxa = Species_List$`Penaeid shrimp`
 
 
 # load SEAMAP data files "https://seamap.gsmfc.org/datarequests/index.php" -----
@@ -162,19 +162,19 @@ Fish_Wt_1$Measurement_Type = with(Fish_Wt_1, ifelse(MEASCD_GLF %in% 18, "TL", if
 
 
 
-#Creating use_TL_cm column
+#Creating use_TL_cm column; Division by 10 is commented out for penaeid shrimp calculations as per comments in Name Translator table. Not required for other groups!!!!
 Fish_Wt_1 <- ddply(Fish_Wt_1, .(Measurement_Type), function(x){
 
   m_type <- unique(x$Measurement_Type)
 
   if(m_type =="TL"){
-    x$use_TL_cm <- x$LEN_GLF/10
+    x$use_TL_cm <- x$LEN_GLF#/10
 
   } else if(m_type =="SL"){
-    x$use_TL_cm <- (x$SL_2_TL_a + x$SL_2_TL_b * (x$LEN_GLF)/10)
+    x$use_TL_cm <- (x$SL_2_TL_a + x$SL_2_TL_b * (x$LEN_GLF))#/10)
 
   } else if(m_type =="FL"){
-    x$use_TL_cm <- (x$FL_2_TL_a + x$FL_2_TL_b * (x$LEN_GLF)/10)
+    x$use_TL_cm <- (x$FL_2_TL_a + x$FL_2_TL_b * (x$LEN_GLF))#/10)
 
   } else {
     x$use_TL_cm <- NA
